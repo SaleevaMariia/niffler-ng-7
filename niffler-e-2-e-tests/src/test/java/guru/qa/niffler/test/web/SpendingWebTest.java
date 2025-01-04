@@ -16,17 +16,17 @@ public class SpendingWebTest {
   private static final Config CFG = Config.getInstance();
 
   @Spending(
-      username = "duck",
-      category = "Обучение",
-      description = "Обучение Advanced 2.0",
-      amount = 79990
+          username = "maria",
+          category = "Обучение",
+          description = "Обучение Advanced 2.0",
+          amount = 79990
   )
   @Test
   void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
     final String newDescription = "Обучение Niffler Next Generation";
 
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .login("duck", "12345")
+            .login("maria", "123456")
         .editSpending(spend.description())
         .setNewSpendingDescription(newDescription)
         .save();
