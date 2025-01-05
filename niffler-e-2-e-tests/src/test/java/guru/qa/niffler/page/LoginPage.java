@@ -26,9 +26,7 @@ public class LoginPage {
   }
 
   public LoginPage loginWithBadCredentials(String username, String password) {
-    usernameInput.setValue(username);
-    passwordInput.setValue(password);
-    submitButton.click();
+    login(username, password);
     return new LoginPage();
   }
 

@@ -51,16 +51,14 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
-        CategoryJson category = context.getStore(CategoryExtension.NAMESPACE).get(context.getUniqueId(),
-                CategoryJson.class);
-        if (!category.archived()) {
-            CategoryJson archivedCategory = new CategoryJson(
-                    category.id(),
-                    category.name(),
-                    category.username(),
-                    true
-            );
-            spendApiClient.updateCategory(archivedCategory);
-        }
+        CategoryJson category = context.getStore(CategoryExtension.NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
+        CategoryJson archivedCategory = new CategoryJson(
+                category.id(),
+                category.name(),
+                category.username(),
+                true
+        );
+        spendApiClient.updateCategory(archivedCategory);
     }
 }
+

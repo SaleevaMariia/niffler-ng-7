@@ -23,7 +23,7 @@ public class ProfileTest {
     void archivedCategoryShouldPresentInCategoriesListWhenShowArchivedOn(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(login, password).goToProfile()
-                .showArchivedCategory()
+                .clickArchivedSwitcher()
                 .checkThatCategoryVisible(category.name());
     }
 
@@ -35,7 +35,6 @@ public class ProfileTest {
     void archivedCategoryShouldNotPresentInCategoriesListWhenShowArchivedOff(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(login, password).goToProfile()
-                .hideArchivedCategory()
                 .checkThatCategoryIsNotVisible(category.name());
     }
 
@@ -46,8 +45,8 @@ public class ProfileTest {
     @Test
     void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(login, password).goToProfile()
-                .hideArchivedCategory()
+                .login(login, password)
+                .goToProfile()
                 .checkThatCategoryVisible(category.name());
     }
 
@@ -58,9 +57,10 @@ public class ProfileTest {
     @Test
     void activeCategoryCanBeArchivedInProfile(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(login, password).goToProfile()
+                .login(login, password)
+                .goToProfile()
                 .archiveCategoryByName(category.name())
-                .showArchivedCategory()
+                .clickArchivedSwitcher()
                 .checkThatCategoryArchived(category.name());
     }
 
@@ -71,8 +71,9 @@ public class ProfileTest {
     @Test
     void archivedCategoryCanBeActivatedInProfile(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(login, password).goToProfile()
-                .showArchivedCategory()
+                .login(login, password)
+                .goToProfile()
+                .clickArchivedSwitcher()
                 .unArchiveCategoryByName(category.name())
                 .checkThatCategoryActive(category.name());
     }

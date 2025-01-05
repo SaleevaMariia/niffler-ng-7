@@ -27,9 +27,9 @@ public class SpendingWebTest {
 
     Selenide.open(CFG.frontUrl(), LoginPage.class)
             .login("maria", "123456")
-        .editSpending(spend.description())
-        .setNewSpendingDescription(newDescription)
-        .save();
+            .editSpending(spend.description())
+            .setNewSpendingDescription(newDescription)
+            .save();
 
     new MainPage().checkThatTableContainsSpending(newDescription);
   }

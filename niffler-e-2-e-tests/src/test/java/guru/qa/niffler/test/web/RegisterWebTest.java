@@ -17,9 +17,13 @@ public class RegisterWebTest {
     void shouldRegisterNewUser() {
         final String login = faker.internet().emailAddress();
         final String password = faker.internet().password(3, 12);
-        Selenide.open(CFG.frontUrl(), LoginPage.class).clickCreateNewAccount()
-                .setUsername(login).setPassword(password)
-                .setPasswordSubmit(password).submitRegistration().singInAfterRegistration()
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .clickCreateNewAccount()
+                .setUsername(login)
+                .setPassword(password)
+                .setPasswordSubmit(password)
+                .submitRegistration()
+                .singInAfterRegistration()
                 .login(login, password)
                 .checkNewUserLogin();
     }
@@ -28,21 +32,32 @@ public class RegisterWebTest {
     void shouldNotRegisterUserWithExistingUsername() {
         final String login = faker.internet().emailAddress();
         final String password = faker.internet().password(3, 12);
-        Selenide.open(CFG.frontUrl(), LoginPage.class).clickCreateNewAccount()
-                .setUsername(login).setPassword(password)
-                .setPasswordSubmit(password).submitRegistration().singInAfterRegistration();
-        Selenide.open(CFG.frontUrl(), LoginPage.class).clickCreateNewAccount()
-                .setUsername(login).setPassword(password)
-                .setPasswordSubmit(password).submitRegistration().checkThatUserAlreadyExistsError();
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .clickCreateNewAccount()
+                .setUsername(login)
+                .setPassword(password)
+                .setPasswordSubmit(password)
+                .submitRegistration()
+                .singInAfterRegistration();
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .clickCreateNewAccount()
+                .setUsername(login)
+                .setPassword(password)
+                .setPasswordSubmit(password)
+                .submitRegistration()
+                .checkThatUserAlreadyExistsError();
     }
 
     @Test
     void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
         final String login = faker.internet().emailAddress();
         final String password = faker.internet().password(3, 12);
-        Selenide.open(CFG.frontUrl(), LoginPage.class).clickCreateNewAccount()
-                .setUsername(login).setPassword(password)
-                .setPasswordSubmit(password + "1").submitRegistration()
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .clickCreateNewAccount()
+                .setUsername(login)
+                .setPassword(password)
+                .setPasswordSubmit(password + "1")
+                .submitRegistration()
                 .checkThatPasswordAndSubmitPasswordNotEqualError();
     }
 
@@ -50,7 +65,8 @@ public class RegisterWebTest {
     void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
         final String login = faker.internet().emailAddress();
         final String password = faker.internet().password(3, 12);
-        Selenide.open(CFG.frontUrl(), LoginPage.class).loginWithBadCredentials(login, password)
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .loginWithBadCredentials(login, password)
                 .checkErrorAfterBadCredentials();
     }
 }
