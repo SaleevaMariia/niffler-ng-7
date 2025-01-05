@@ -15,7 +15,7 @@ public class Annotation {
     }
 
     @Test
-    void test1(@UserType(empty = false) StaticUser user) throws InterruptedException {
+    void test1(@UserType(empty = true) StaticUser user) throws InterruptedException {
         Thread.sleep(1000);
         System.out.println(user);
     }

@@ -16,22 +16,22 @@ public class SpendingWebTest {
 
   private static final Config CFG = Config.getInstance();
 
+  @DisabledByIssue("4")
   @Spending(
           username = "duck",
           category = "Обучение",
           description = "Обучение Advanced 2.0",
           amount = 79990
   )
-  @DisabledByIssue("3")
   @Test
   void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
     final String newDescription = "Обучение Niffler Next Generation";
 
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .login("duck", "12345")
-        .editSpending(spend.description())
-        .setNewSpendingDescription(newDescription)
-        .save();
+            .login("maria", "123456")
+            .editSpending(spend.description())
+            .setNewSpendingDescription(newDescription)
+            .save();
 
     new MainPage().checkThatTableContainsSpending(newDescription);
   }
