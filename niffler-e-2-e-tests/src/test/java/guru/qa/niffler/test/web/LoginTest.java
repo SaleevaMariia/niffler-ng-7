@@ -10,20 +10,20 @@ import org.junit.jupiter.api.Test;
 @WebTest
 public class LoginTest {
 
-  private static final Config CFG = Config.getInstance();
-  private static final Faker faker = new Faker();
+    private static final Config CFG = Config.getInstance();
+    private static final Faker faker = new Faker();
 
-  @Test
-  void mainPageShouldBeDisplayedAfterSuccessLogin() {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
-  }
+    @Test
+    void mainPageShouldBeDisplayedAfterSuccessLogin() {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLogin("maria", "123456")
+                .checkThatPageLoaded();
+    }
 
-  @Test
-  void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-    LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
-    loginPage.login(faker.name().username(), "BAD");
-    loginPage.checkError("Bad credentials");
-  }
+    @Test
+    void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
+        LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
+        loginPage.loginWithBadCredentials(faker.name().username(), "BAD");
+        loginPage.checkErrorAfterBadCredentials();
+    }
 }
