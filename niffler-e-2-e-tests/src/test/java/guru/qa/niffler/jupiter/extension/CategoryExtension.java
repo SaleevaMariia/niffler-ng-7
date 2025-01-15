@@ -1,44 +1,46 @@
 package guru.qa.niffler.jupiter.extension;
 
-import com.github.javafaker.Faker;
 import guru.qa.niffler.api.SpendApiClient;
-import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 public class CategoryExtension implements BeforeEachCallback, ParameterResolver, AfterTestExecutionCallback {
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
-    private static final Faker faker = new Faker();
     private final SpendApiClient spendApiClient = new SpendApiClient();
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Category.class)
+        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(anno -> {
-                    CategoryJson category = new CategoryJson(
-                            null,
-                            faker.internet().emailAddress(),
-                            anno.username(),
-                            false
-                    );
-                    CategoryJson created = spendApiClient.addCategory(category);
-                    if (anno.archived()) {
-                        CategoryJson archivedCategory = new CategoryJson(
-                                created.id(),
-                                created.name(),
-                                created.username(),
-                                true
+                    if (anno.categories().length != 0) {
+                        CategoryJson category = new CategoryJson(
+                                null,
+                                RandomDataUtils.randomCategoryName(),
+                                anno.username(),
+                                false
                         );
+                        CategoryJson created = spendApiClient.addCategory(category);
+                        if (anno.categories()[0].archived()) {
+                            CategoryJson archivedCategory = new CategoryJson(
+                                    created.id(),
+                                    created.name(),
+                                    created.username(),
+                                    true
+                            );
 
-                        created = spendApiClient.updateCategory(archivedCategory);
+                            created = spendApiClient.updateCategory(archivedCategory);
+                        }
+                        context.getStore(NAMESPACE).put(
+                                context.getUniqueId(),
+                                created
+                        );
                     }
-                    context.getStore(NAMESPACE).put(
-                            context.getUniqueId(),
-                            created
-                    );
                 });
     }
+
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
@@ -53,13 +55,15 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
         CategoryJson category = context.getStore(CategoryExtension.NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
-        CategoryJson archivedCategory = new CategoryJson(
-                category.id(),
-                category.name(),
-                category.username(),
-                true
-        );
-        spendApiClient.updateCategory(archivedCategory);
+        if (category != null) {
+            CategoryJson archivedCategory = new CategoryJson(
+                    category.id(),
+                    category.name(),
+                    category.username(),
+                    true
+            );
+            spendApiClient.updateCategory(archivedCategory);
+        }
     }
 }
 

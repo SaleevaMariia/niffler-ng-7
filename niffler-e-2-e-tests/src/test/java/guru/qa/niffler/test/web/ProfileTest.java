@@ -3,6 +3,7 @@ package guru.qa.niffler.test.web;
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.page.LoginPage;
@@ -15,9 +16,12 @@ public class ProfileTest {
     private static final String login = "maria";
     private static final String password = "123456";
 
-    @Category(
+
+    @User(
             username = login,
-            archived = true
+            categories = @Category(
+                    archived = true
+            )
     )
     @Test
     void archivedCategoryShouldPresentInCategoriesListWhenShowArchivedOn(CategoryJson category) {
@@ -27,9 +31,11 @@ public class ProfileTest {
                 .checkThatCategoryVisible(category.name());
     }
 
-    @Category(
+    @User(
             username = login,
-            archived = true
+            categories = @Category(
+                    archived = true
+            )
     )
     @Test
     void archivedCategoryShouldNotPresentInCategoriesListWhenShowArchivedOff(CategoryJson category) {
@@ -38,9 +44,9 @@ public class ProfileTest {
                 .checkThatCategoryIsNotVisible(category.name());
     }
 
-    @Category(
+    @User(
             username = login,
-            archived = false
+            categories = @Category()
     )
     @Test
     void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
@@ -50,9 +56,9 @@ public class ProfileTest {
                 .checkThatCategoryVisible(category.name());
     }
 
-    @Category(
+    @User(
             username = login,
-            archived = false
+            categories = @Category()
     )
     @Test
     void activeCategoryCanBeArchivedInProfile(CategoryJson category) {
@@ -64,9 +70,11 @@ public class ProfileTest {
                 .checkThatCategoryArchived(category.name());
     }
 
-    @Category(
+    @User(
             username = login,
-            archived = true
+            categories = @Category(
+                    archived = true
+            )
     )
     @Test
     void archivedCategoryCanBeActivatedInProfile(CategoryJson category) {

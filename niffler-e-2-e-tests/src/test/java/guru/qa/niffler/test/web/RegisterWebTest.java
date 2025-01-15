@@ -1,22 +1,21 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import com.github.javafaker.Faker;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(BrowserExtension.class)
 public class RegisterWebTest {
     private static final Config CFG = Config.getInstance();
-    private static final Faker faker = new Faker();
 
     @Test
     void shouldRegisterNewUser() {
-        final String login = faker.internet().emailAddress();
-        final String password = faker.internet().password(3, 12);
+        final String login = RandomDataUtils.randomEmail();
+        final String password = RandomDataUtils.randomPassword();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateNewAccount()
                 .setUsername(login)
@@ -30,8 +29,8 @@ public class RegisterWebTest {
 
     @Test
     void shouldNotRegisterUserWithExistingUsername() {
-        final String login = faker.internet().emailAddress();
-        final String password = faker.internet().password(3, 12);
+        final String login = RandomDataUtils.randomEmail();
+        final String password = RandomDataUtils.randomPassword();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateNewAccount()
                 .setUsername(login)
@@ -50,8 +49,8 @@ public class RegisterWebTest {
 
     @Test
     void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
-        final String login = faker.internet().emailAddress();
-        final String password = faker.internet().password(3, 12);
+        final String login = RandomDataUtils.randomEmail();
+        final String password = RandomDataUtils.randomPassword();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateNewAccount()
                 .setUsername(login)
@@ -63,8 +62,8 @@ public class RegisterWebTest {
 
     @Test
     void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-        final String login = faker.internet().emailAddress();
-        final String password = faker.internet().password(3, 12);
+        final String login = RandomDataUtils.randomEmail();
+        final String password = RandomDataUtils.randomPassword();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .loginWithBadCredentials(login, password)
                 .checkErrorAfterBadCredentials();
