@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public record SpendJson(
         @JsonProperty("id")
-    UUID id,
+        UUID id,
         @JsonProperty("spendDate")
-    Date spendDate,
+        Date spendDate,
         @JsonProperty("category")
         CategoryJson category,
         @JsonProperty("currency")
