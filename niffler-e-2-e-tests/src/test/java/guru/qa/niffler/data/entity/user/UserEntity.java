@@ -1,6 +1,6 @@
 package guru.qa.niffler.data.entity.user;
 
-import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.UserJson;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,11 +11,28 @@ import java.util.UUID;
 @Setter
 public class UserEntity implements Serializable {
     private UUID id;
+
     private String username;
-    private CurrencyValues currency;
-    private String fullname;
-    private String firstname;
-    private String surname;
-    private byte[] photo;
-    private byte[] photoSmall;
+
+    private String password;
+
+    private Boolean enabled;
+
+    private Boolean accountNonExpired;
+
+    private Boolean accountNonLocked;
+
+    private Boolean credentialsNonExpired;
+
+    public static UserEntity fromJson(UserJson json) {
+        UserEntity ue = new UserEntity();
+        ue.setId(json.id());
+        ue.setUsername(json.username());
+        ue.setPassword(json.password());
+        ue.setCredentialsNonExpired(true);
+        ue.setAccountNonLocked(true);
+        ue.setAccountNonExpired(true);
+        ue.setEnabled(true);
+        return ue;
+    }
 }
