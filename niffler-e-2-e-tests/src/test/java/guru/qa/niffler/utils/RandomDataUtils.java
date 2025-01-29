@@ -14,10 +14,6 @@ public class RandomDataUtils {
         return faker.internet().emailAddress();
     }
 
-    public static String randomCategoryName() {
-        return faker.food().vegetable();
-    }
-
     public static String randomPassword() {
         return faker.internet().password(3, 12);
     }
