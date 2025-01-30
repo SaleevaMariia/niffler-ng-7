@@ -1,9 +1,9 @@
 package guru.qa.niffler.test.web;
 
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.*;
 import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.UserDbClient;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -31,5 +31,77 @@ public class JdbcTest {
                 ));
         System.out.println(json);
 
+    }
+
+    @Test
+    void testXaTransactionSuccess() {
+        UserDbClient userDbClient = new UserDbClient();
+        System.out.println(
+                userDbClient.createUser(
+                        new UserJson(
+                                null,
+                                RandomDataUtils.randomUserName(),
+                                "123456"
+                        ),
+                        new UserDataJson(
+                                null,
+                                RandomDataUtils.randomUserName(),
+                                null,
+                                null,
+                                null,
+                                CurrencyValues.RUB,
+                                null,
+                                null
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testXaTransactionErrorFirst() {
+        UserDbClient userDbClient = new UserDbClient();
+        System.out.println(
+                userDbClient.createUser(
+                        new UserJson(
+                                null,
+                                RandomDataUtils.randomUserName(),
+                                "123456"
+                        ),
+                        new UserDataJson(
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                CurrencyValues.RUB,
+                                null,
+                                null
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testXaTransactionErrorSecond() {
+        UserDbClient userDbClient = new UserDbClient();
+        System.out.println(
+                userDbClient.createUser(
+                        new UserJson(
+                                null,
+                                null,
+                                "123456"
+                        ),
+                        new UserDataJson(
+                                null,
+                                RandomDataUtils.randomUserName(),
+                                null,
+                                null,
+                                null,
+                                CurrencyValues.RUB,
+                                null,
+                                null
+                        )
+                )
+        );
     }
 }
