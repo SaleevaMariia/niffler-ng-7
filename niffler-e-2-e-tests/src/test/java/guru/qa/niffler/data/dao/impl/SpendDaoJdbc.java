@@ -115,6 +115,41 @@ public class SpendDaoJdbc implements SpendDao {
     }
 
     @Override
+    public List<SpendEntity> findAll() {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT spend.id as spend_id, spend.username as spend_username, " +
+                        "spend_date, currency, amount, description, " +
+                        "category.id as category_id, name, category.username as category_username, " +
+                        "category.archived " +
+                        "FROM spend JOIN category ON spend.category_id = category.id"
+        )) {
+            ps.execute();
+            List<SpendEntity> spendEntities = new ArrayList<>();
+            try (ResultSet rs = ps.getResultSet()) {
+                while (rs.next()) {
+                    SpendEntity se = new SpendEntity();
+                    CategoryEntity ce = new CategoryEntity();
+                    se.setId(rs.getObject("spend_id", UUID.class));
+                    se.setUsername(rs.getString("spend_username"));
+                    se.setSpendDate(rs.getDate("spend_date"));
+                    se.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
+                    se.setAmount(rs.getDouble("amount"));
+                    se.setDescription(rs.getString("description"));
+                    ce.setId(rs.getObject("category_id", UUID.class));
+                    ce.setName(rs.getString("name"));
+                    ce.setUsername(rs.getString("category_username"));
+                    ce.setArchived(rs.getBoolean("archived"));
+                    se.setCategory(ce);
+                    spendEntities.add(se);
+                }
+                return spendEntities;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void deleteSpend(SpendEntity spend) {
         try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM spend WHERE id = ?"
