@@ -5,11 +5,14 @@ import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
 
 
 public class JdbcTest {
+    PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @Test
     void daoTest() {
@@ -41,7 +44,7 @@ public class JdbcTest {
                         new UserJson(
                                 null,
                                 RandomDataUtils.randomUserName(),
-                                "123456"
+                                passwordEncoder.encode("123456")
                         ),
                         new UserDataJson(
                                 null,
@@ -65,7 +68,7 @@ public class JdbcTest {
                         new UserJson(
                                 null,
                                 RandomDataUtils.randomUserName(),
-                                "123456"
+                                passwordEncoder.encode("123456")
                         ),
                         new UserDataJson(
                                 null,
@@ -89,7 +92,7 @@ public class JdbcTest {
                         new UserJson(
                                 null,
                                 null,
-                                "123456"
+                                passwordEncoder.encode("123456")
                         ),
                         new UserDataJson(
                                 null,
