@@ -1,24 +1,26 @@
 package guru.qa.niffler.data.dao.impl;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.user.UserEntity;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class AuthUserDaoJdbc implements AuthUserDao {
-    private final Connection connection;
+import static guru.qa.niffler.data.tpl.Connections.holder;
 
-    public AuthUserDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
+public class AuthUserDaoJdbc implements AuthUserDao {
+    private static final Config CFG = Config.getInstance();
 
     @Override
     public UserEntity create(UserEntity user) {
-        try (PreparedStatement ps = connection.prepareStatement(
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"user\" (username, password, enabled," +
                         " account_non_expired, account_non_locked, credentials_non_expired) " +
                         "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS
@@ -47,7 +49,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public Optional<UserEntity> findUserByUsername(String username) {
-        try (PreparedStatement ps = connection.prepareStatement(
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "SELECT * FROM \"user\" WHERE username = ?"
         )) {
             ps.setObject(1, username);
@@ -74,7 +76,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public List<UserEntity> findAll() {
-        try (PreparedStatement ps = connection.prepareStatement(
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "SELECT * FROM \"user\""
         )) {
             ps.execute();

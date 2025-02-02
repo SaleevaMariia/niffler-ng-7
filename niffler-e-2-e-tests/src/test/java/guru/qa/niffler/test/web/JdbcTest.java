@@ -39,16 +39,17 @@ public class JdbcTest {
     @Test
     void testXaTransactionSuccess() {
         UserDbClient userDbClient = new UserDbClient();
+        String username = RandomDataUtils.randomUserName();
         System.out.println(
-                userDbClient.createUser(
+                userDbClient.createUserSpringJdbc(
                         new UserJson(
                                 null,
-                                RandomDataUtils.randomUserName(),
+                                username,
                                 passwordEncoder.encode("123456")
                         ),
                         new UserDataJson(
                                 null,
-                                RandomDataUtils.randomUserName(),
+                                username,
                                 null,
                                 null,
                                 null,
@@ -64,7 +65,7 @@ public class JdbcTest {
     void testXaTransactionErrorFirst() {
         UserDbClient userDbClient = new UserDbClient();
         System.out.println(
-                userDbClient.createUser(
+                userDbClient.createUserSpringJdbc(
                         new UserJson(
                                 null,
                                 RandomDataUtils.randomUserName(),
@@ -88,7 +89,7 @@ public class JdbcTest {
     void testXaTransactionErrorSecond() {
         UserDbClient userDbClient = new UserDbClient();
         System.out.println(
-                userDbClient.createUser(
+                userDbClient.createUserSpringJdbc(
                         new UserJson(
                                 null,
                                 null,
