@@ -37,38 +37,15 @@ public class JdbcTest {
     }
 
     @Test
-    void testXaTransactionSuccess() {
+    void testXaTransactionErrorSecondTable() {
         UserDbClient userDbClient = new UserDbClient();
         String username = RandomDataUtils.randomUserName();
+        System.out.println("username: " + username);
         System.out.println(
-                userDbClient.createUserSpringJdbc(
+                userDbClient.createUserXaTransactionManagerJdbc(
                         new UserJson(
                                 null,
                                 username,
-                                passwordEncoder.encode("123456")
-                        ),
-                        new UserDataJson(
-                                null,
-                                username,
-                                null,
-                                null,
-                                null,
-                                CurrencyValues.RUB,
-                                null,
-                                null
-                        )
-                )
-        );
-    }
-
-    @Test
-    void testXaTransactionErrorFirst() {
-        UserDbClient userDbClient = new UserDbClient();
-        System.out.println(
-                userDbClient.createUserSpringJdbc(
-                        new UserJson(
-                                null,
-                                RandomDataUtils.randomUserName(),
                                 passwordEncoder.encode("123456")
                         ),
                         new UserDataJson(
@@ -85,11 +62,66 @@ public class JdbcTest {
         );
     }
 
+
     @Test
-    void testXaTransactionErrorSecond() {
+    void testWithoutTransactionErrorSecondTable() {
         UserDbClient userDbClient = new UserDbClient();
+        String username = RandomDataUtils.randomUserName();
+        System.out.println("username: " + username);
         System.out.println(
-                userDbClient.createUserSpringJdbc(
+                userDbClient.createUserWithoutTxJdbc(
+                        new UserJson(
+                                null,
+                                username,
+                                passwordEncoder.encode("123456")
+                        ),
+                        new UserDataJson(
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                CurrencyValues.RUB,
+                                null,
+                                null
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testTransactionErrorSecondTable() {
+        UserDbClient userDbClient = new UserDbClient();
+        String username = RandomDataUtils.randomUserName();
+        System.out.println("username: " + username);
+        System.out.println(
+                userDbClient.createUserChainedTransactionManagerJdbc(
+                        new UserJson(
+                                null,
+                                username,
+                                passwordEncoder.encode("123456")
+                        ),
+                        new UserDataJson(
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                CurrencyValues.RUB,
+                                null,
+                                null
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testTransactionErrorFirstTable() {
+        UserDbClient userDbClient = new UserDbClient();
+        String username = RandomDataUtils.randomUserName();
+        System.out.println("username: " + username);
+        System.out.println(
+                userDbClient.createUserChainedTransactionManagerJdbc(
                         new UserJson(
                                 null,
                                 null,
@@ -97,7 +129,7 @@ public class JdbcTest {
                         ),
                         new UserDataJson(
                                 null,
-                                RandomDataUtils.randomUserName(),
+                                username,
                                 null,
                                 null,
                                 null,
