@@ -1,19 +1,19 @@
 package guru.qa.niffler.test.web;
 
-import guru.qa.niffler.model.*;
+import guru.qa.niffler.data.entity.user.CurrencyValues;
+import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
-import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
 
+import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
+
 
 public class JdbcTest {
-    PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-
     @Test
     void daoTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
@@ -37,96 +37,12 @@ public class JdbcTest {
     }
 
     @Test
-    void testXaTransactionErrorSecondTable() {
+    void testXaTransaction() {
         UserDbClient userDbClient = new UserDbClient();
-        String username = RandomDataUtils.randomUserName();
+        String username = randomUserName();
         System.out.println("username: " + username);
         System.out.println(
                 userDbClient.createUserXaTransactionManagerJdbc(
-                        new UserJson(
-                                null,
-                                username,
-                                passwordEncoder.encode("123456")
-                        ),
-                        new UserDataJson(
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                CurrencyValues.RUB,
-                                null,
-                                null
-                        )
-                )
-        );
-    }
-
-
-    @Test
-    void testWithoutTransactionErrorSecondTable() {
-        UserDbClient userDbClient = new UserDbClient();
-        String username = RandomDataUtils.randomUserName();
-        System.out.println("username: " + username);
-        System.out.println(
-                userDbClient.createUserWithoutTxJdbc(
-                        new UserJson(
-                                null,
-                                username,
-                                passwordEncoder.encode("123456")
-                        ),
-                        new UserDataJson(
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                CurrencyValues.RUB,
-                                null,
-                                null
-                        )
-                )
-        );
-    }
-
-    @Test
-    void testTransactionErrorSecondTable() {
-        UserDbClient userDbClient = new UserDbClient();
-        String username = RandomDataUtils.randomUserName();
-        System.out.println("username: " + username);
-        System.out.println(
-                userDbClient.createUserChainedTransactionManagerJdbc(
-                        new UserJson(
-                                null,
-                                username,
-                                passwordEncoder.encode("123456")
-                        ),
-                        new UserDataJson(
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                CurrencyValues.RUB,
-                                null,
-                                null
-                        )
-                )
-        );
-    }
-
-    @Test
-    void testTransactionErrorFirstTable() {
-        UserDbClient userDbClient = new UserDbClient();
-        String username = RandomDataUtils.randomUserName();
-        System.out.println("username: " + username);
-        System.out.println(
-                userDbClient.createUserChainedTransactionManagerJdbc(
-                        new UserJson(
-                                null,
-                                null,
-                                passwordEncoder.encode("123456")
-                        ),
                         new UserDataJson(
                                 null,
                                 username,

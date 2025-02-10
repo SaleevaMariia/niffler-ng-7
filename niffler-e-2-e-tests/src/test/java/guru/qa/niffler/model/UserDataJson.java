@@ -1,6 +1,7 @@
 package guru.qa.niffler.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.data.entity.user.UserDataEntity;
 
 import java.nio.charset.StandardCharsets;

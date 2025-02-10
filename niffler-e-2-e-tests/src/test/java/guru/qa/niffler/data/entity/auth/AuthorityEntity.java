@@ -1,6 +1,5 @@
-package guru.qa.niffler.data.entity.spend;
+package guru.qa.niffler.data.entity.auth;
 
-import guru.qa.niffler.model.CategoryJson;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,30 +12,20 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "category")
-public class CategoryEntity implements Serializable {
+@Table(name = "authority")
+public class AuthorityEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, columnDefinition = "UUID default gen_random_uuid()")
     private UUID id;
 
     @Column(nullable = false)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
 
-    @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
-    private boolean archived;
-
-    public static CategoryEntity fromJson(CategoryJson json) {
-        CategoryEntity ce = new CategoryEntity();
-        ce.setId(json.id());
-        ce.setName(json.name());
-        ce.setUsername(json.username());
-        ce.setArchived(json.archived());
-        return ce;
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @Override
     public final boolean equals(Object o) {
@@ -45,7 +34,7 @@ public class CategoryEntity implements Serializable {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        CategoryEntity that = (CategoryEntity) o;
+        AuthorityEntity that = (AuthorityEntity) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

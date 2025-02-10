@@ -1,8 +1,8 @@
 package guru.qa.niffler.jupiter.extension;
 
+import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendDbClient;
 import org.junit.jupiter.api.extension.*;

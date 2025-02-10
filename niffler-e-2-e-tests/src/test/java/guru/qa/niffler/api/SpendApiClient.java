@@ -1,8 +1,8 @@
 package guru.qa.niffler.api;
 
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.DataFilterValues;
 import guru.qa.niffler.model.SpendJson;
 import retrofit2.Response;
