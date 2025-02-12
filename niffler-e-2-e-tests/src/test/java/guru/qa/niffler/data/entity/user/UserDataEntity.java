@@ -122,4 +122,20 @@ public class UserDataEntity implements Serializable {
         ue.setFullname(json.fullname());
         return ue;
     }
+
+    @Override
+    public String toString() {
+        return "UserDataEntity{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", currency=" + currency +
+                ", firstname='" + firstname + '\'' +
+                ", surname='" + surname + '\'' +
+                ", fullname='" + fullname + '\'' +
+                ", photo=" + Arrays.toString(photo) +
+                ", photoSmall=" + Arrays.toString(photoSmall) +
+                ", friendshipRequests=" + friendshipRequests +
+                ", friendshipAddressees=" + friendshipAddressees +
+                '}';
+    }
 }

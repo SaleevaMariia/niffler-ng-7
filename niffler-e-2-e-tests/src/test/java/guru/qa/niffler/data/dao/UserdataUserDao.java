@@ -16,4 +16,6 @@ public interface UserdataUserDao {
     List<UserDataEntity> findAll();
 
     void delete(UserDataEntity user);
+
+    UserDataEntity update(UserDataEntity user);
 }
