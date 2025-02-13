@@ -63,7 +63,29 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     }
 
     @Override
-    public Optional<UserEntity> findUserByUsername(String username) {
+    public Optional<UserEntity> findById(UUID id) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+        return Optional.ofNullable(
+                jdbcTemplate.query(
+                        """
+                                 SELECT a.id as authority_id,
+                                 authority,
+                                 user_id as id,
+                                 u.username,
+                                 u.password,
+                                 u.enabled,
+                                 u.account_non_expired,
+                                 u.account_non_locked,
+                                 u.credentials_non_expired
+                                FROM "user" u join public.authority a on u.id = a.user_id WHERE u.id = ? """,
+                        AuthUserEntityExtractor.instance,
+                        id
+                ).getFirst()
+        );
+    }
+
+    @Override
+    public Optional<UserEntity> findByUsername(String username) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
         return Optional.ofNullable(
                 jdbcTemplate.query(
@@ -81,25 +103,6 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
                         AuthUserEntityExtractor.instance,
                         username
                 ).getFirst()
-        );
-    }
-
-    @Override
-    public List<UserEntity> findAll() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
-        return jdbcTemplate.query(
-                """
-                         SELECT a.id as authority_id,
-                         authority,
-                         user_id as id,
-                         u.username,
-                         u.password,
-                         u.enabled,
-                         u.account_non_expired,
-                         u.account_non_locked,
-                         u.credentials_non_expired
-                        FROM "user" u join public.authority a on u.id = a.user_id """,
-                AuthUserEntityExtractor.instance
         );
     }
 }

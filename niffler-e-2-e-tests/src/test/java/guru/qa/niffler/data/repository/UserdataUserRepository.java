@@ -10,6 +10,8 @@ public interface UserdataUserRepository {
 
     Optional<UserDataEntity> findById(UUID id);
 
+    Optional<UserDataEntity> findByUsername(String username);
+
     void addIncomeInvitation(UserDataEntity requester, UserDataEntity addressee);
 
     void addOutcomeInvitation(UserDataEntity requester, UserDataEntity addressee);

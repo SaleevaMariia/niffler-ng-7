@@ -62,11 +62,11 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     }
 
     @Override
-    public Optional<UserEntity> findUserByUsername(String username) {
+    public Optional<UserEntity> findById(UUID id) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "select * from \"user\" u join authority a on u.id = a.user_id where u.username = ?"
+                "select * from \"user\" u join authority a on u.id = a.user_id where u.id = ?"
         )) {
-            ps.setObject(1, username);
+            ps.setObject(1, id);
             ps.execute();
             try (ResultSet rs = ps.getResultSet()) {
                 UserEntity user = null;
@@ -94,37 +94,31 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     }
 
     @Override
-    public List<UserEntity> findAll() {
+    public Optional<UserEntity> findByUsername(String username) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "select * from \"user\" u join authority a on u.id = a.user_id"
+                "select * from \"user\" u join authority a on u.id = a.user_id where u.username = ?"
         )) {
+            ps.setObject(1, username);
             ps.execute();
-            List<UserEntity> users = new ArrayList<>();
             try (ResultSet rs = ps.getResultSet()) {
+                UserEntity user = null;
+                List<AuthorityEntity> authorityEntities = new ArrayList<>();
                 while (rs.next()) {
-                    UserEntity user = UserEntityRowMapper.instance.mapRow(rs, rs.getRow());
-                    if (users.contains(user)) {
-                        UserEntity existUser = users.stream().filter(x -> x.getId() == user.getId())
-                                .findFirst().get();
-                        AuthorityEntity ae = new AuthorityEntity();
-                        ae.setUser(existUser);
-                        ae.setId(rs.getObject("a.id", UUID.class));
-                        ae.setAuthority(Authority.valueOf(rs.getString("authority")));
-                        List<AuthorityEntity> authorityEntities = existUser.getAuthorities();
-                        authorityEntities.add(ae);
-                        existUser.setAuthorities(authorityEntities);
-                    } else {
-                        List<AuthorityEntity> authorityEntities = new ArrayList<>();
-                        AuthorityEntity ae = new AuthorityEntity();
-                        ae.setUser(user);
-                        ae.setId(rs.getObject("a.id", UUID.class));
-                        ae.setAuthority(Authority.valueOf(rs.getString("authority")));
-                        authorityEntities.add(ae);
-                        user.setAuthorities(authorityEntities);
+                    if (user == null) {
+                        user = UserEntityRowMapper.instance.mapRow(rs, 1);
                     }
-                    users.add(user);
+                    AuthorityEntity ae = new AuthorityEntity();
+                    ae.setUser(user);
+                    ae.setId(rs.getObject("a.id", UUID.class));
+                    ae.setAuthority(Authority.valueOf(rs.getString("authority")));
+                    authorityEntities.add(ae);
                 }
-                return users;
+                if (user == null) {
+                    return Optional.empty();
+                } else {
+                    user.setAuthorities(authorityEntities);
+                    return Optional.of(user);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

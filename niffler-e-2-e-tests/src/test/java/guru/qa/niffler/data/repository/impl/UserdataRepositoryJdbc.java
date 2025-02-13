@@ -97,6 +97,55 @@ public class UserdataRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
+    public Optional<UserDataEntity> findByUsername(String username) {
+        try (PreparedStatement addressPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+                "select * from \"user\", friendship f " +
+                        "where (\"user\".id = f.addressee_id or \"user\".id = f.requester_id) " +
+                        "and \"user\".username = ?"
+        )) {
+            addressPs.setObject(1, username);
+            addressPs.execute();
+            UserDataEntity user = null;
+            try (ResultSet rs = addressPs.getResultSet()) {
+                while (rs.next()) {
+                    if (user == null) {
+                        user = UserDataEntityRowMapper.instance.mapRow(rs, 1);
+                    }
+                    if (rs.getObject("requester_id") != null) {
+                        FriendshipEntity fe = new FriendshipEntity();
+
+                        if (rs.getObject("requester_id", UUID.class).equals(user.getId())) {
+                            fe.setRequester(user);
+                            UserDataEntity u = new UserDataEntity();
+                            u.setId(rs.getObject("addressee_id", UUID.class));
+                            fe.setAddressee(u);
+                            fe.setStatus(FriendshipStatus.valueOf(rs.getString("status")));
+                            fe.setCreatedDate(rs.getDate("created_date"));
+                            user.getFriendshipRequests().add(fe);
+                        }
+                        if (rs.getObject("addressee_id", UUID.class).equals(user.getId())) {
+                            UserDataEntity u = new UserDataEntity();
+                            u.setId(rs.getObject("requester_id", UUID.class));
+                            fe.setRequester(u);
+                            fe.setAddressee(user);
+                            fe.setStatus(FriendshipStatus.valueOf(rs.getString("status")));
+                            fe.setCreatedDate(rs.getDate("created_date"));
+                            user.getFriendshipAddressees().add(fe);
+                        }
+                    }
+                }
+                if (user == null) {
+                    return Optional.empty();
+                } else {
+                    return Optional.of(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void addIncomeInvitation(UserDataEntity requester, UserDataEntity addressee) {
         try (PreparedStatement friendPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO friendship (requester_id, addressee_id, status, created_date) " +
