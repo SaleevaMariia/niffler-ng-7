@@ -62,6 +62,40 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     }
 
     @Override
+    public UserEntity update(UserEntity user) {
+        try (PreparedStatement userPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                """
+                                 UPDATE "user" SET username = ?, password = ?, enabled = ?, 
+                                 account_non_expired = ?, account_non_locked = ?, credentials_non_expired = ? 
+                               WHERE id = ?
+                        """
+        );
+             PreparedStatement authorityPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                     "UPDATE \"authority\" SET authority = ? WHERE user_id = ?")
+        ) {
+            userPs.setString(1, user.getUsername());
+            userPs.setString(2, user.getPassword());
+            userPs.setBoolean(3, user.getEnabled());
+            userPs.setBoolean(4, user.getAccountNonExpired());
+            userPs.setBoolean(5, user.getAccountNonLocked());
+            userPs.setBoolean(6, user.getCredentialsNonExpired());
+            userPs.setObject(7, user.getId());
+            userPs.executeUpdate();
+
+            for (AuthorityEntity a : user.getAuthorities()) {
+                authorityPs.setString(1, a.getAuthority().name());
+                authorityPs.setObject(2, user.getId());
+                authorityPs.addBatch();
+                authorityPs.clearParameters();
+            }
+            authorityPs.executeBatch();
+            return user;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public Optional<UserEntity> findById(UUID id) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "select * from \"user\" u join authority a on u.id = a.user_id where u.id = ?"
@@ -88,6 +122,23 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
                     return Optional.of(user);
                 }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void remove(UserEntity user) {
+        try (PreparedStatement userPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                "DELETE FROM \"user\" WHERE id = ?"
+        );
+             PreparedStatement authorityPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                     "DELETE FROM \"authority\" WHERE user_id = ?")
+        ) {
+            userPs.setObject(1, user.getId());
+            authorityPs.setObject(1, user.getId());
+            userPs.executeUpdate();
+            authorityPs.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

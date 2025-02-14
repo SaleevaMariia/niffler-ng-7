@@ -63,6 +63,45 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     }
 
     @Override
+    public UserEntity update(UserEntity user) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(
+                    """
+                               UPDATE "user" SET username = ?, password = ?, enabled = ?, 
+                                 account_non_expired = ?, account_non_locked = ?, credentials_non_expired = ? 
+                               WHERE id = ?
+                            """
+            );
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.setBoolean(3, user.getEnabled());
+            ps.setBoolean(4, user.getAccountNonExpired());
+            ps.setBoolean(5, user.getAccountNonLocked());
+            ps.setBoolean(6, user.getCredentialsNonExpired());
+            ps.setObject(7, user.getId());
+            return ps;
+        });
+
+        List<AuthorityEntity> a = user.getAuthorities();
+
+        jdbcTemplate.batchUpdate("UPDATE \"authority\" SET authority = ? WHERE user_id = ?",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
+                        preparedStatement.setString(1, a.get(i).getAuthority().name());
+                        preparedStatement.setObject(2, user.getId());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return a.size();
+                    }
+                });
+        return user;
+    }
+
+    @Override
     public Optional<UserEntity> findById(UUID id) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
         return Optional.ofNullable(
@@ -82,6 +121,21 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
                         id
                 ).getFirst()
         );
+    }
+
+    @Override
+    public void remove(UserEntity user) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement("DELETE FROM \"user\" WHERE id = ?");
+            ps.setObject(1, user.getId());
+            return ps;
+        });
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement("DELETE FROM \"authority\" WHERE user_id = ?");
+            ps.setObject(1, user.getId());
+            return ps;
+        });
     }
 
     @Override
