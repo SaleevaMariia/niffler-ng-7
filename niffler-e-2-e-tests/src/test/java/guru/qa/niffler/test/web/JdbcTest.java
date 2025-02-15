@@ -23,14 +23,14 @@ public class JdbcTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "testtest 5",
-                                "maria",
+                                "testtest 3",
+                                "test-maria13",
                                 false
                         ),
                         CurrencyValues.EUR,
-                        100.0,
+                        12.0,
                         "test description",
-                        "maria"
+                        "test-maria13"
                 ));
         System.out.println(json);
 
@@ -40,17 +40,17 @@ public class JdbcTest {
 
     @ValueSource(
             strings = {
-                    "test-maria4"
+                    "test-maria14"
             }
     )
     @ParameterizedTest
     void testXaTransaction(String username) {
         userDbClient = new UserDbClient();
         UserDataJson user = (
-                userDbClient.createUserXaTransactionManagerJdbc(
+                userDbClient.createUser(
                         username, "12345"
                 )
         );
-        userDbClient.addIncomeInvitation(user, 1);
+        userDbClient.createFriends(user, 1);
     }
 }

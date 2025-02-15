@@ -8,7 +8,11 @@ import java.util.UUID;
 public interface AuthUserRepository {
     UserEntity create(UserEntity user);
 
+    UserEntity update(UserEntity user);
+
     Optional<UserEntity> findByUsername(String username);
 
     Optional<UserEntity> findById(UUID id);
+
+    void remove(UserEntity user);
 }
