@@ -15,15 +15,67 @@ public class SpringJdbcTest {
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @Test
-    void testSpringJdbc() {
+    void testWithoutTransactionErrorSecondTable() {
         UserDbClient userDbClient = new UserDbClient();
         String username = RandomDataUtils.randomUserName();
-        System.out.println("username = " + username);
+        System.out.println("username: " + username);
         System.out.println(
-                userDbClient.createUserSpringJdbc(
+                userDbClient.createUserWithoutTxSpring(
                         new UserJson(
                                 null,
                                 username,
+                                passwordEncoder.encode("123456")
+                        ),
+                        new UserDataJson(
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                CurrencyValues.RUB,
+                                null,
+                                null
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testTransactionErrorSecondTable() {
+        UserDbClient userDbClient = new UserDbClient();
+        String username = RandomDataUtils.randomUserName();
+        System.out.println("username: " + username);
+        System.out.println(
+                userDbClient.createUserChainedTransactionManagerSpringJdbc(
+                        new UserJson(
+                                null,
+                                username,
+                                passwordEncoder.encode("123456")
+                        ),
+                        new UserDataJson(
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                CurrencyValues.RUB,
+                                null,
+                                null
+                        )
+                )
+        );
+    }
+
+    @Test
+    void testTransactionErrorFirstTable() {
+        UserDbClient userDbClient = new UserDbClient();
+        String username = RandomDataUtils.randomUserName();
+        System.out.println("username: " + username);
+        System.out.println(
+                userDbClient.createUserChainedTransactionManagerSpringJdbc(
+                        new UserJson(
+                                null,
+                                null,
                                 passwordEncoder.encode("123456")
                         ),
                         new UserDataJson(
