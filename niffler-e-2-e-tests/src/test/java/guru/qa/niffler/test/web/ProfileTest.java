@@ -24,11 +24,11 @@ public class ProfileTest {
             )
     )
     @Test
-    void archivedCategoryShouldPresentInCategoriesListWhenShowArchivedOn(CategoryJson category) {
+    void archivedCategoryShouldPresentInCategoriesListWhenShowArchivedOn(CategoryJson[] category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(login, password).goToProfile()
                 .clickArchivedSwitcher()
-                .checkThatCategoryVisible(category.name());
+                .checkThatCategoryVisible(category[0].name());
     }
 
     @User(
@@ -38,10 +38,10 @@ public class ProfileTest {
             )
     )
     @Test
-    void archivedCategoryShouldNotPresentInCategoriesListWhenShowArchivedOff(CategoryJson category) {
+    void archivedCategoryShouldNotPresentInCategoriesListWhenShowArchivedOff(CategoryJson[] category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(login, password).goToProfile()
-                .checkThatCategoryIsNotVisible(category.name());
+                .checkThatCategoryIsNotVisible(category[0].name());
     }
 
     @User(
@@ -49,11 +49,11 @@ public class ProfileTest {
             categories = @Category()
     )
     @Test
-    void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
+    void activeCategoryShouldPresentInCategoriesList(CategoryJson[] category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(login, password)
                 .goToProfile()
-                .checkThatCategoryVisible(category.name());
+                .checkThatCategoryVisible(category[0].name());
     }
 
     @User(
@@ -61,13 +61,13 @@ public class ProfileTest {
             categories = @Category()
     )
     @Test
-    void activeCategoryCanBeArchivedInProfile(CategoryJson category) {
+    void activeCategoryCanBeArchivedInProfile(CategoryJson[] category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(login, password)
                 .goToProfile()
-                .archiveCategoryByName(category.name())
+                .archiveCategoryByName(category[0].name())
                 .clickArchivedSwitcher()
-                .checkThatCategoryArchived(category.name());
+                .checkThatCategoryArchived(category[0].name());
     }
 
     @User(
@@ -77,13 +77,13 @@ public class ProfileTest {
             )
     )
     @Test
-    void archivedCategoryCanBeActivatedInProfile(CategoryJson category) {
+    void archivedCategoryCanBeActivatedInProfile(CategoryJson[] category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(login, password)
                 .goToProfile()
                 .clickArchivedSwitcher()
-                .unArchiveCategoryByName(category.name())
-                .checkThatCategoryActive(category.name());
+                .unArchiveCategoryByName(category[0].name())
+                .checkThatCategoryActive(category[0].name());
     }
 
 }

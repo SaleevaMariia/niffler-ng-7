@@ -8,8 +8,8 @@ import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.data.entity.user.UserDataEntity;
 import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
-import guru.qa.niffler.data.repository.impl.AuthUserRepositoryHibernate;
-import guru.qa.niffler.data.repository.impl.UserdataRepositoryHibernate;
+import guru.qa.niffler.data.repository.impl.AuthUserRepositoryJdbc;
+import guru.qa.niffler.data.repository.impl.UserdataRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.UserDataJson;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -24,8 +24,8 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 public class UserDbClient implements UsersClient {
     private static final Config CFG = Config.getInstance();
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    private final UserdataUserRepository userdataRepository = new UserdataRepositoryHibernate();
-    private final AuthUserRepository authUserRepository = new AuthUserRepositoryHibernate();
+    private final UserdataUserRepository userdataRepository = new UserdataRepositoryJdbc();
+    private final AuthUserRepository authUserRepository = new AuthUserRepositoryJdbc();
 
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
@@ -40,7 +40,7 @@ public class UserDbClient implements UsersClient {
             UserEntity user = userEntity(username, password);
             authUserRepository.create(user);
             return UserDataJson.fromEntity(
-                    userdataRepository.create(userDataEntity(username)));
+                    userdataRepository.create(userDataEntity(username)), null);
         });
     }
 
