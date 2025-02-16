@@ -17,6 +17,7 @@ public class MainPage {
   private final SelenideElement profileMenu = $("a[href='/profile']");
   private final SelenideElement statComponent = $("#stat");
   private final SelenideElement spendingTable = $("#spendings");
+  private final SelenideElement search = $("input[placeholder='Search'");
 
   public FriendsPage goToFriends() {
     avatarButton.click();
@@ -31,6 +32,7 @@ public class MainPage {
   }
 
   public EditSpendingPage editSpending(String spendingDescription) {
+    search.setValue(spendingDescription).pressEnter();
     tableRows.find(text(spendingDescription)).$$("td").get(5).click();
     return new EditSpendingPage();
   }

@@ -67,7 +67,7 @@ public class UserDataEntity implements Serializable {
                     FriendshipEntity fe = new FriendshipEntity();
                     fe.setRequester(i);
                     fe.setAddressee(this);
-                    fe.setStatus(FriendshipStatus.PENDING);
+                    fe.setStatus(FriendshipStatus.INVITE_SENT);
                     fe.setCreatedDate(new Date());
                     return fe;
                 }).toList();

@@ -26,8 +26,8 @@ public record UserDataJson(
         String photo,
         @JsonProperty("photoSmall")
         String photoSmall,
-        @JsonProperty("friendshipStatus")
-        FriendshipStatus friendshipStatus,
+        @JsonProperty("friendState")
+        FriendshipStatus friendState,
         @JsonIgnore
         TestData testData) {
 
@@ -48,6 +48,6 @@ public record UserDataJson(
     }
 
     public UserDataJson addTestData(TestData testData) {
-        return new UserDataJson(id, username, firstname, surname, fullname, currency, photo, photoSmall, friendshipStatus, testData);
+        return new UserDataJson(id, username, firstname, surname, fullname, currency, photo, photoSmall, friendState, testData);
     }
 }

@@ -2,13 +2,10 @@ package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.api.UserApiClient;
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.service.UsersClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
-
-import java.util.ArrayList;
 
 import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
@@ -29,16 +26,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                         usersClient.createFriends(user, userAnno.friends());
                         context.getStore(NAMESPACE).put(
                                 context.getUniqueId(),
-                                user.addTestData(
-                                        new TestData(
-                                                defaultPassword,
-                                                new ArrayList<>(),
-                                                new ArrayList<>(),
-                                                new ArrayList<>(),
-                                                new ArrayList<>(),
-                                                new ArrayList<>()
-                                        )
-                                )
+                                user
                         );
                     }
                 });
