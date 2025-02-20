@@ -45,8 +45,9 @@ public class UserApiClient implements UsersClient {
     public UserDataJson createUser(String username, String password) {
         final Response<UserDataJson> response;
         try {
-            String token = userApiAuth.getRegisterPage().execute().headers().get("x-xsrf-token");
-            userApiAuth.registerUser(username, password, password, token).execute();
+            userApiAuth.getRegisterPage().execute();
+            userApiAuth.registerUser(username, password, password,
+                    ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")).execute();
             response = userApiUserData.currentUser(username).execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -64,6 +65,7 @@ public class UserApiClient implements UsersClient {
                 final UserDataJson newUser;
                 try {
                     newUser = createUser(newUsername, defaultPassword);
+                    Thread.sleep(1000);
                     responseUser = userApiUserData.sendInvitation(newUsername, targetUser.username()).execute();
                     targetUser.testData()
                             .incomeInvitations()
@@ -71,8 +73,14 @@ public class UserApiClient implements UsersClient {
 
                 } catch (IOException e) {
                     throw new AssertionError(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+                System.out.println("targetUser.username():" + targetUser.username());
+                System.out.println("newUsername" + newUsername);
                 assertEquals(200, responseUser.code());
+                System.out.println(responseUser.errorBody());
+                System.out.println(responseUser.body());
             }
         }
 
@@ -87,6 +95,7 @@ public class UserApiClient implements UsersClient {
                 final UserDataJson newUser;
                 try {
                     newUser = createUser(newUsername, defaultPassword);
+                    Thread.sleep(1000);
                     responseUser = userApiUserData.sendInvitation(targetUser.username(), newUsername).execute();
                     targetUser.testData()
                             .outcomeInvitations()
@@ -94,8 +103,15 @@ public class UserApiClient implements UsersClient {
 
                 } catch (IOException e) {
                     throw new AssertionError(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+                System.out.println("targetUser.username():" + targetUser.username());
+                System.out.println("newUsername" + newUsername);
                 assertEquals(200, responseUser.code());
+                System.out.println(responseUser.errorBody());
+                System.out.println(responseUser.body());
+
             }
         }
     }
@@ -108,6 +124,7 @@ public class UserApiClient implements UsersClient {
                 final String newUsername = RandomDataUtils.randomUserName();
                 try {
                     createUser(newUsername, defaultPassword);
+                    Thread.sleep(1000);
                     userApiUserData.sendInvitation(newUsername, targetUser.username()).execute();
                     responseUser = userApiUserData.acceptInvitation(targetUser.username(), newUsername).execute();
                     targetUser.testData()
@@ -115,8 +132,14 @@ public class UserApiClient implements UsersClient {
                             .add(responseUser.body());
                 } catch (IOException e) {
                     throw new AssertionError(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+                System.out.println("targetUser.username():" + targetUser.username());
+                System.out.println("newUsername" + newUsername);
                 assertEquals(200, responseUser.code());
+                System.out.println(responseUser.errorBody());
+                System.out.println(responseUser.body());
             }
         }
     }
