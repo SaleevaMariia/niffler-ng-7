@@ -30,14 +30,14 @@ public class UserdataRepositorySpringJdbc implements UserdataUserRepository {
 
     @Override
     public void sendInvitation(UserDataEntity requester, UserDataEntity addressee) {
-        requester.addFriends(FriendshipStatus.PENDING, addressee);
+        requester.addFriends(FriendshipStatus.INVITE_SENT, addressee);
         udUserDao.update(requester);
     }
 
     @Override
     public void addFriend(UserDataEntity requester, UserDataEntity addressee) {
-        requester.addFriends(FriendshipStatus.ACCEPTED, addressee);
-        addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
+        requester.addFriends(FriendshipStatus.FRIEND, addressee);
+        addressee.addFriends(FriendshipStatus.FRIEND, requester);
         udUserDao.update(requester);
         udUserDao.update(addressee);
     }
