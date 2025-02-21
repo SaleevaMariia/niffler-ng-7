@@ -11,6 +11,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -18,6 +20,7 @@ import java.net.CookiePolicy;
 import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class UserApiClient implements UsersClient {
     OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .cookieJar(new JavaNetCookieJar(
@@ -42,7 +45,7 @@ public class UserApiClient implements UsersClient {
 
 
     @Override
-    public UserDataJson createUser(String username, String password) {
+    public @Nullable UserDataJson createUser(String username, String password) {
         final Response<UserDataJson> response;
         try {
             userApiAuth.getRegisterPage().execute();

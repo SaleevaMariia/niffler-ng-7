@@ -1,20 +1,26 @@
 package guru.qa.niffler.api;
+
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.DataFilterValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class SpendApiClient implements SpendClient {
     private final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.getInstance().spendUrl())
@@ -23,7 +29,7 @@ public class SpendApiClient implements SpendClient {
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
-    public SpendJson createSpend(SpendJson spend) {
+    public @Nullable SpendJson createSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
             response = spendApi.addSpend(spend).execute();
@@ -34,7 +40,7 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public SpendJson editSpend(SpendJson spend) {
+    public @Nullable SpendJson editSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
             response = spendApi.editSpend(spend).execute();
@@ -45,7 +51,7 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public SpendJson getSpend(String id, String username) {
+    public @Nullable SpendJson getSpend(String id, String username) {
         final Response<SpendJson> response;
         try {
             response = spendApi.getSpend(id, username).execute();
@@ -56,15 +62,16 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public List<SpendJson> getSpends(String username, DataFilterValues data, CurrencyValues currency) {
+    public @Nonnull List<SpendJson> getSpends(String username, @Nullable CurrencyValues currency,
+                                              @Nullable Date from, @Nullable Date to) {
         final Response<List<SpendJson>> response;
         try {
-            response = spendApi.getSpends(username, data, currency).execute();
+            response = spendApi.getSpends(username, currency, from, to).execute();
         } catch (IOException e) {
             throw new AssertionError(e);
         }
         assertEquals(200, response.code());
-        return response.body();
+        return response.body() != null ? response.body() : Collections.emptyList();
     }
 
     public void removeSpend(SpendJson spend) {
@@ -79,7 +86,7 @@ public class SpendApiClient implements SpendClient {
         assertEquals(202, response.code());
     }
 
-    public CategoryJson createCategory(CategoryJson categoryJson) {
+    public @Nullable CategoryJson createCategory(CategoryJson categoryJson) {
         Response<CategoryJson> response;
         try {
             response = spendApi.addCategory(categoryJson).execute();
@@ -103,7 +110,7 @@ public class SpendApiClient implements SpendClient {
         throw new UnsupportedOperationException("Операция removeCategory не поддерживается");
     }
 
-    public CategoryJson updateCategory(CategoryJson categoryJson) {
+    public @Nullable CategoryJson updateCategory(CategoryJson categoryJson) {
         final Response<CategoryJson> response;
         try {
             response = spendApi.updateCategory(categoryJson).execute();
@@ -114,7 +121,7 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public List<CategoryJson> getCategories(String username, boolean excludeArch) {
+    public @Nonnull List<CategoryJson> getCategories(String username, boolean excludeArch) {
         final Response<List<CategoryJson>> response;
         try {
             response = spendApi.getCategories(username, excludeArch).execute();
@@ -122,6 +129,6 @@ public class SpendApiClient implements SpendClient {
             throw new AssertionError(e);
         }
         assertEquals(200, response.code());
-        return response.body();
+        return response.body() != null ? response.body() : Collections.emptyList();
     }
 }

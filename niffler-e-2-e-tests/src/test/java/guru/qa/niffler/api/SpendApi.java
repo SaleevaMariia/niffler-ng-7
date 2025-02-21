@@ -1,11 +1,12 @@
 package guru.qa.niffler.api;
+
 import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.DataFilterValues;
 import guru.qa.niffler.model.SpendJson;
 import retrofit2.Call;
 import retrofit2.http.*;
 
+import java.util.Date;
 import java.util.List;
 
 public interface SpendApi {
@@ -20,8 +21,10 @@ public interface SpendApi {
 
     @GET("internal/spends/all")
     Call<List<SpendJson>> getSpends(@Query("username") String user,
-                                    @Query("filterPeriod") DataFilterValues dat,
-                                    @Query("filterCurrency") CurrencyValues cur);
+                                    @Query("filterCurrency") CurrencyValues cur,
+                                    @Query("from") Date from,
+                                    @Query("to") Date to
+    );
 
     @DELETE("internal/spends/remove")
     Call<Void> deleteSpends(@Query("username") String user, @Query("ids") List<String> ids);
