@@ -1,60 +1,66 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.page.component.SpendingTable;
+import io.qameta.allure.Step;
 
-import static com.codeborne.selenide.Condition.*;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
+@ParametersAreNonnullByDefault
 public class MainPage {
+    private final SelenideElement statistics = $("#stat canvas");
+    private final SelenideElement statComponent = $("#stat");
+    private final SelenideElement addSpendingBtn = $("a[href='/spending']");
+    private final Header header = new Header();
 
-  private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
-  private final SelenideElement avatarButton = $("button.MuiButtonBase-root[aria-label=Menu]");
-  private final SelenideElement friendsMenu = $("a[href='/people/friends']");
-  private final SelenideElement allPeopleMenu = $("a[href='/people/all']");
-  private final SelenideElement statistics = $("#stat canvas");
-  private final SelenideElement noSpending = $("div.MuiBox-root p");
-  private final SelenideElement profileMenu = $("a[href='/profile']");
-  private final SelenideElement statComponent = $("#stat");
-  private final SelenideElement spendingTable = $("#spendings");
-  private final SelenideElement search = $("input[placeholder='Search'");
+    private final SpendingTable spendingTable = new SpendingTable();
 
-  public FriendsPage goToFriends() {
-    avatarButton.click();
-    friendsMenu.shouldBe(visible).click();
-    return new FriendsPage();
-  }
+    @Nonnull
+    public FriendsPage goToFriends() {
+        return header.toFriendsPage();
+    }
 
-  public AllPeoplePage goToAllPeople() {
-    avatarButton.click();
-    allPeopleMenu.shouldBe(visible).click();
-    return new AllPeoplePage();
-  }
+    @Nonnull
+    public AllPeoplePage goToAllPeople() {
+        return header.toAllPeoplePage();
+    }
 
-  public EditSpendingPage editSpending(String spendingDescription) {
-    search.setValue(spendingDescription).pressEnter();
-    tableRows.find(text(spendingDescription)).$$("td").get(5).click();
-    return new EditSpendingPage();
-  }
+    @Nonnull
+    public EditSpendingPage editSpending(String spendingDescription) {
+        return spendingTable.editSpending(spendingDescription);
+    }
 
-  public ProfilePage goToProfile() {
-    avatarButton.click();
-    profileMenu.shouldBe(visible).click();
-    return new ProfilePage();
-  }
+    @Nonnull
+    public ProfilePage goToProfile() {
+        return header.toProfilePage();
+    }
 
-  public void checkThatTableContainsSpending(String spendingDescription) {
-    tableRows.find(text(spendingDescription)).should(visible);
-  }
+    @Nonnull
+    public EditSpendingPage addNewSpendingClick() {
+        addSpendingBtn.click();
+        return new EditSpendingPage();
+    }
 
-  public void checkNewUserLogin() {
-    statistics.should(visible);
-    noSpending.shouldHave(exactText("There are no spendings"));
-  }
+    public void checkThatTableContainsSpending(String spendingDescription) {
+        spendingTable.checkTableContains(spendingDescription);
+    }
 
-  public MainPage checkThatPageLoaded() {
-    statComponent.should(visible).shouldHave(text("Statistics"));
-    spendingTable.should(visible).shouldHave(text("History of Spendings"));
-    return this;
-  }
+    @Step("Проверяем, что у нового пользователя нет трат")
+    public void checkNewUserLogin() {
+        statistics.should(visible);
+        spendingTable.checkTableSize(0);
+    }
+
+    @Step("Проверяем, что пользователь успешно зашел в аккаунт")
+    @Nonnull
+    public MainPage checkThatPageLoaded() {
+        statComponent.should(visible).shouldHave(text("Statistics"));
+        return this;
+    }
 }

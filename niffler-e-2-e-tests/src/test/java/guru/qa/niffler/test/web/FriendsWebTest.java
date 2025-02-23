@@ -48,4 +48,26 @@ public class FriendsWebTest {
                 .checkPersonWasSentOutcomeRequest(user.testData().outcomeInvitationsUsernames()[0]);
     }
 
+
+    @User(incomeInvitations = 1)
+    @Test
+    void userCanAcceptFriendInvitation(UserDataJson user) {
+        System.out.println(user.testData().incomeInvitationsUsernames()[0]);
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLogin(user.username(), user.testData().password())
+                .goToFriends()
+                .acceptFriendsRequest(user.testData().incomeInvitationsUsernames()[0])
+                .checkPersonInFriends(user.testData().incomeInvitationsUsernames()[0]);
+    }
+
+    @User(incomeInvitations = 1)
+    @Test
+    void userCanDeclineFriendInvitation(UserDataJson user) {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLogin(user.username(), user.testData().password())
+                .goToFriends()
+                .declineFriendsRequest(user.testData().incomeInvitationsUsernames()[0])
+                .checkPersonNotInFriends(user.testData().incomeInvitationsUsernames()[0]);
+    }
+
 }

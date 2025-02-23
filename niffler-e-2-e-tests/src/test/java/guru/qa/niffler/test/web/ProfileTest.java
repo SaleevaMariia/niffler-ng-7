@@ -10,6 +10,7 @@ import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
+import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
 
 @WebTest
@@ -84,6 +85,21 @@ public class ProfileTest {
                 .clickArchivedSwitcher()
                 .unArchiveCategoryByName(categoryName)
                 .checkThatCategoryActive(categoryName);
+    }
+
+    @User
+    @Test
+    void nameCanBeChangedInProfile(UserDataJson user) {
+        String username = user.username();
+        String newName = randomUserName();
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLogin(user.username(), defaultPassword)
+                .goToProfile()
+                .checkUsername(username)
+                .checkName("")
+                .changeName(newName)
+                .checkName(newName)
+                .checkUsername(username);
     }
 
 }

@@ -7,17 +7,21 @@ import guru.qa.niffler.data.repository.SpendRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.jpa.EntityManagers.em;
 
+@ParametersAreNonnullByDefault
 public class SpendRepositoryHibernate implements SpendRepository {
     private static final Config CFG = Config.getInstance();
 
     private final EntityManager entityManager = em(CFG.spendJdbcUrl());
 
     @Override
+    @Nonnull
     public SpendEntity create(SpendEntity spend) {
         entityManager.joinTransaction();
         entityManager.persist(spend);
@@ -25,12 +29,14 @@ public class SpendRepositoryHibernate implements SpendRepository {
     }
 
     @Override
+    @Nonnull
     public SpendEntity update(SpendEntity spend) {
         entityManager.joinTransaction();
         return entityManager.merge(spend);
     }
 
     @Override
+    @Nonnull
     public CategoryEntity createCategory(CategoryEntity category) {
         entityManager.joinTransaction();
         entityManager.persist(category);

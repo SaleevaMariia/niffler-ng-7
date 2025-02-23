@@ -10,6 +10,8 @@ import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.data.repository.SpendRepository;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,12 +20,14 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class SpendRepositoryJdbc implements SpendRepository {
     private static final Config CFG = Config.getInstance();
     private final CategoryDao categoryDao = new CategoryDaoJdbc();
     private final SpendDao spendDao = new SpendDaoJdbc();
 
     @Override
+    @Nonnull
     public SpendEntity create(SpendEntity spend) {
         UUID categoryId = spend.getCategory().getId();
         if (categoryId == null || categoryDao.findCategoryById(categoryId) == null) {
@@ -33,12 +37,14 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
+    @Nonnull
     public SpendEntity update(SpendEntity spend) {
         categoryDao.update(spend.getCategory());
         return spendDao.update(spend);
     }
 
     @Override
+    @Nonnull
     public CategoryEntity createCategory(CategoryEntity category) {
         return categoryDao.create(category);
     }

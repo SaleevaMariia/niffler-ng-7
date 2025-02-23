@@ -5,6 +5,7 @@ import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
+import io.qameta.allure.Step;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
@@ -45,6 +46,7 @@ public class UserApiClient implements UsersClient {
 
 
     @Override
+    @Step("Создаем пользователя {username} используя REST API")
     public @Nullable UserDataJson createUser(String username, String password) {
         final Response<UserDataJson> response;
         try {
@@ -60,6 +62,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
+    @Step("Создаем входящее приглашение в друзья используя REST API")
     public void createIncomeInvitation(UserDataJson targetUser, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
@@ -68,6 +71,7 @@ public class UserApiClient implements UsersClient {
                 final UserDataJson newUser;
                 try {
                     newUser = createUser(newUsername, defaultPassword);
+                    //для многопоточности
                     Thread.sleep(1000);
                     responseUser = userApiUserData.sendInvitation(newUsername, targetUser.username()).execute();
                     targetUser.testData()
@@ -90,6 +94,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
+    @Step("Создаем исходящее приглашение в друзья используя REST API")
     public void createOutcomeInvitation(UserDataJson targetUser, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
@@ -98,6 +103,7 @@ public class UserApiClient implements UsersClient {
                 final UserDataJson newUser;
                 try {
                     newUser = createUser(newUsername, defaultPassword);
+                    //для многопоточности
                     Thread.sleep(1000);
                     responseUser = userApiUserData.sendInvitation(targetUser.username(), newUsername).execute();
                     targetUser.testData()
@@ -120,6 +126,7 @@ public class UserApiClient implements UsersClient {
     }
 
     @Override
+    @Step("Создаем друга используя REST API")
     public void createFriends(UserDataJson targetUser, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
@@ -127,6 +134,7 @@ public class UserApiClient implements UsersClient {
                 final String newUsername = RandomDataUtils.randomUserName();
                 try {
                     createUser(newUsername, defaultPassword);
+                    //для многопоточности
                     Thread.sleep(1000);
                     userApiUserData.sendInvitation(newUsername, targetUser.username()).execute();
                     responseUser = userApiUserData.acceptInvitation(targetUser.username(), newUsername).execute();
