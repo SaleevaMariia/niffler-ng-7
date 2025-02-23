@@ -1,23 +1,29 @@
 package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.data.entity.user.CurrencyValues;
+import guru.qa.niffler.jupiter.extension.UsersClientExtension;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserDataJson;
+import guru.qa.niffler.service.SpendClient;
 import guru.qa.niffler.service.SpendDbClient;
-import guru.qa.niffler.service.UserDbClient;
+import guru.qa.niffler.service.UsersClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Date;
 
-
+@ExtendWith(UsersClientExtension.class)
 public class JdbcTest {
+    static UsersClient userClient;
+
+    static
     @Test
     void daoTest() {
-        SpendDbClient spendDbClient = new SpendDbClient();
-        SpendJson json = spendDbClient.createSpend(
+        SpendClient spendClient = new SpendDbClient();
+        SpendJson json = spendClient.createSpend(
                 new SpendJson(
                         null,
                         new Date(),
@@ -36,21 +42,18 @@ public class JdbcTest {
 
     }
 
-    static UserDbClient userDbClient;
-
     @ValueSource(
             strings = {
-                    "test-maria14"
+                    "test-maria146"
             }
     )
     @ParameterizedTest
     void testXaTransaction(String username) {
-        userDbClient = new UserDbClient();
         UserDataJson user = (
-                userDbClient.createUser(
+                userClient.createUser(
                         username, "12345"
                 )
         );
-        userDbClient.createFriends(user, 1);
+        userClient.createFriends(user, 1);
     }
 }

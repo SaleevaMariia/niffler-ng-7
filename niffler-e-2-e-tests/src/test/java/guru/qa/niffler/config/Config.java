@@ -13,26 +13,28 @@ public interface Config {
   @Nonnull
   String frontUrl();
 
-  @Nonnull
-  String spendUrl();
+    @Nonnull
+    String spendUrl();
+
+    @Nonnull
+    String spendJdbcUrl();
+
+    @Nonnull
+    String currencyJdbcUrl();
+
+    @Nonnull
+    default String ghUrl() {
+        return "https://api.github.com/";
+    }
 
   @Nonnull
-  String spendJdbcUrl();
+    String authUrl();
 
-  @Nonnull
-  String currencyJdbcUrl();
+    @Nonnull
+    String authJdbcUrl();
 
-  @Nonnull
-  String ghUrl();
-
-  @Nonnull
-  String authUrl();
-
-  @Nonnull
-  String authJdbcUrl();
-
-  @Nonnull
-  String gatewayUrl();
+    @Nonnull
+    String gatewayUrl();
 
   @Nonnull
   String userdataUrl();

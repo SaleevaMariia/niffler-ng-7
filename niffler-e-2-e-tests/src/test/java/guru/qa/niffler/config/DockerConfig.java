@@ -31,12 +31,6 @@ enum DockerConfig implements Config {
 
     @Override
     @Nonnull
-  public String ghUrl() {
-    return "";
-  }
-
-    @Override
-    @Nonnull
   public String authUrl() {
     return "";
   }

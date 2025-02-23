@@ -1,6 +1,5 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
@@ -17,7 +16,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
 public class CategoryExtension implements BeforeEachCallback, ParameterResolver {
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
-    private final SpendClient spendDbClient = new SpendApiClient();
+    private final SpendClient spendDbClient = SpendClient.getInstance();
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {

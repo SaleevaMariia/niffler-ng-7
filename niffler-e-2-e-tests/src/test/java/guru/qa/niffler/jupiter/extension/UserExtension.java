@@ -1,6 +1,5 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.api.UserApiClient;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.service.UsersClient;
@@ -12,7 +11,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
-    private final UsersClient usersClient = new UserApiClient();
+    private final UsersClient usersClient = UsersClient.getInstance();
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
