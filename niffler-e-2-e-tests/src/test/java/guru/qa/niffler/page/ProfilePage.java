@@ -14,7 +14,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 @ParametersAreNonnullByDefault
-public class ProfilePage {
+public class ProfilePage extends BasePage<ProfilePage> {
     private final SelenideElement showArchived = $("span.MuiSwitch-switchBase");
     private final ElementsCollection tableRows = $("div.MuiGrid-container", 1)
             .findAll("div.MuiGrid-item")
@@ -97,5 +97,13 @@ public class ProfilePage {
     @Step("Проверяем что категория с именем {name} активна")
     public void checkThatCategoryActive(String name) {
         activeCategories.find(text(name)).shouldBe(visible);
+    }
+
+    @Override
+    @Nonnull
+    @Step("Проверяем, что страница профайла пользователя успешно отобразилась")
+    public ProfilePage checkThatPageLoaded() {
+        nameInput.shouldBe(visible);
+        return this;
     }
 }

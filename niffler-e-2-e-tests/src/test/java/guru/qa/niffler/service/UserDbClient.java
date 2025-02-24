@@ -5,12 +5,14 @@ import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.auth.UserEntity;
 import guru.qa.niffler.data.entity.user.CurrencyValues;
+import guru.qa.niffler.data.entity.user.FriendshipStatus;
 import guru.qa.niffler.data.entity.user.UserDataEntity;
 import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
 import guru.qa.niffler.data.repository.impl.AuthUserRepositoryJdbc;
 import guru.qa.niffler.data.repository.impl.UserdataRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
+import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserDataJson;
 import io.qameta.allure.Step;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -22,6 +24,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
 @ParametersAreNonnullByDefault
@@ -46,10 +49,9 @@ public class UserDbClient implements UsersClient {
             UserEntity user = userEntity(username, password);
             authUserRepository.create(user);
             return UserDataJson.fromEntity(
-                    userdataRepository.create(userDataEntity(username)), null);
+                    userdataRepository.create(userDataEntity(username)), null).addTestData(new TestData(password));
         });
     }
-
     @Nonnull
     private UserDataEntity userDataEntity(String username) {
         UserDataEntity ue = new UserDataEntity();
@@ -77,10 +79,13 @@ public class UserDbClient implements UsersClient {
                 xaTransactionTemplate.execute(() -> {
                             final String username = randomUserName();
                             System.out.println("username:" + username);
-                            UserEntity authuser = userEntity(username, "12345");
+                            UserEntity authuser = userEntity(username, defaultPassword);
                             authUserRepository.create(authuser);
                             UserDataEntity user = userdataRepository.create(userDataEntity(username));
                             userdataRepository.sendInvitation(user, targetEntity);
+                            targetUser.testData()
+                                    .incomeInvitations()
+                                    .add(UserDataJson.fromEntity(user, FriendshipStatus.PENDING));
                             return null;
                         }
                 );
@@ -100,10 +105,13 @@ public class UserDbClient implements UsersClient {
                 xaTransactionTemplate.execute(() -> {
                             final String username = randomUserName();
                             System.out.println("username:" + username);
-                            UserEntity authuser = userEntity(username, "12345");
+                            UserEntity authuser = userEntity(username, defaultPassword);
                             authUserRepository.create(authuser);
                             UserDataEntity user = userdataRepository.create(userDataEntity(username));
                             userdataRepository.sendInvitation(targetEntity, user);
+                            targetUser.testData()
+                                    .outcomeInvitations()
+                                    .add(UserDataJson.fromEntity(user, FriendshipStatus.PENDING));
                             return null;
                         }
                 );
@@ -123,10 +131,13 @@ public class UserDbClient implements UsersClient {
                 xaTransactionTemplate.execute(() -> {
                             final String username = randomUserName();
                             System.out.println("username:" + username);
-                            UserEntity authuser = userEntity(username, "12345");
+                            UserEntity authuser = userEntity(username, defaultPassword);
                             authUserRepository.create(authuser);
                             UserDataEntity user = userdataRepository.create(userDataEntity(username));
                             userdataRepository.addFriend(targetEntity, user);
+                            targetUser.testData()
+                                    .friends()
+                                    .add(UserDataJson.fromEntity(user, FriendshipStatus.ACCEPTED));
                             return null;
                         }
                 );

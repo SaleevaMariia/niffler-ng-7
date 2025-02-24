@@ -9,11 +9,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 @ParametersAreNonnullByDefault
-public class EditSpendingPage {
+public class EditSpendingPage extends BasePage<EditSpendingPage> {
 
     private final SelenideElement descriptionInput = $("#description");
     private final SelenideElement saveBtn = $("#save");
@@ -73,11 +74,20 @@ public class EditSpendingPage {
         setNewCurrency(currency);
         setNewSpendingDescription(description);
         save();
+        checkAlertMessage("New spending is successfully created");
         return new MainPage();
     }
 
     @Step("Нажимаем на кнопку сохранить")
     public void save() {
         saveBtn.click();
+    }
+
+    @Override
+    @Nonnull
+    @Step("Проверяем, что страница редактирования траты отобразилась")
+    public EditSpendingPage checkThatPageLoaded() {
+        descriptionInput.shouldBe(visible);
+        return this;
     }
 }

@@ -17,6 +17,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.time.Duration;
+import java.time.Instant;
 
 import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,14 +50,27 @@ public class UserApiClient implements UsersClient {
     @Override
     @Step("Создаем пользователя {username} используя REST API")
     public @Nullable UserDataJson createUser(String username, String password) {
-        final Response<UserDataJson> response;
+        Response<UserDataJson> response;
         try {
             userApiAuth.getRegisterPage().execute();
             userApiAuth.registerUser(username, password, password,
                     ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")).execute();
             response = userApiUserData.currentUser(username).execute();
+            Instant start = Instant.now();
+            Instant finish = Instant.now();
+            while (Duration.between(start, finish).toMillis() < 1000) {
+                response = userApiUserData.currentUser(username).execute();
+                finish = Instant.now();
+                if (response.body() != null && response.body().id() != null) {
+                    break;
+                } else {
+                    Thread.sleep(100);
+                }
+            }
         } catch (IOException e) {
             throw new AssertionError(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         assertEquals(200, response.code());
         return response.body().addTestData(new TestData(password));
@@ -71,8 +86,6 @@ public class UserApiClient implements UsersClient {
                 final UserDataJson newUser;
                 try {
                     newUser = createUser(newUsername, defaultPassword);
-                    //для многопоточности
-                    Thread.sleep(1000);
                     responseUser = userApiUserData.sendInvitation(newUsername, targetUser.username()).execute();
                     targetUser.testData()
                             .incomeInvitations()
@@ -80,14 +93,8 @@ public class UserApiClient implements UsersClient {
 
                 } catch (IOException e) {
                     throw new AssertionError(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
                 }
-                System.out.println("targetUser.username():" + targetUser.username());
-                System.out.println("newUsername" + newUsername);
                 assertEquals(200, responseUser.code());
-                System.out.println(responseUser.errorBody());
-                System.out.println(responseUser.body());
             }
         }
 
@@ -103,8 +110,6 @@ public class UserApiClient implements UsersClient {
                 final UserDataJson newUser;
                 try {
                     newUser = createUser(newUsername, defaultPassword);
-                    //для многопоточности
-                    Thread.sleep(1000);
                     responseUser = userApiUserData.sendInvitation(targetUser.username(), newUsername).execute();
                     targetUser.testData()
                             .outcomeInvitations()
@@ -112,15 +117,8 @@ public class UserApiClient implements UsersClient {
 
                 } catch (IOException e) {
                     throw new AssertionError(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
                 }
-                System.out.println("targetUser.username():" + targetUser.username());
-                System.out.println("newUsername" + newUsername);
                 assertEquals(200, responseUser.code());
-                System.out.println(responseUser.errorBody());
-                System.out.println(responseUser.body());
-
             }
         }
     }
@@ -134,8 +132,6 @@ public class UserApiClient implements UsersClient {
                 final String newUsername = RandomDataUtils.randomUserName();
                 try {
                     createUser(newUsername, defaultPassword);
-                    //для многопоточности
-                    Thread.sleep(1000);
                     userApiUserData.sendInvitation(newUsername, targetUser.username()).execute();
                     responseUser = userApiUserData.acceptInvitation(targetUser.username(), newUsername).execute();
                     targetUser.testData()
@@ -143,14 +139,8 @@ public class UserApiClient implements UsersClient {
                             .add(responseUser.body());
                 } catch (IOException e) {
                     throw new AssertionError(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
                 }
-                System.out.println("targetUser.username():" + targetUser.username());
-                System.out.println("newUsername" + newUsername);
                 assertEquals(200, responseUser.code());
-                System.out.println(responseUser.errorBody());
-                System.out.println(responseUser.body());
             }
         }
     }

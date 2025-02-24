@@ -10,7 +10,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class RegisterPage {
+public class RegisterPage extends BasePage<RegisterPage> {
     private final SelenideElement usernameInput = $("#username");
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement submitPasswordInput = $("#passwordSubmit");
@@ -64,4 +64,11 @@ public class RegisterPage {
         errorPasswordsShouldBeEqual.shouldBe(visible).shouldHave(text("Passwords should be equal"));
     }
 
+    @Override
+    @Nonnull
+    @Step("Проверяем, что страница регистрации пользователя успешно отобразилась")
+    public RegisterPage checkThatPageLoaded() {
+        usernameInput.shouldBe(visible);
+        return this;
+    }
 }

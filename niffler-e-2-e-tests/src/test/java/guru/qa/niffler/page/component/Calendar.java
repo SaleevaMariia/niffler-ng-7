@@ -12,12 +12,15 @@ import java.util.Date;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class Calendar {
-    private final SelenideElement self;
+public class Calendar extends BaseComponent<Calendar> {
     private final SelenideElement input = $("input[name='date']");
 
     public Calendar(SelenideElement self) {
-        this.self = self;
+        super(self);
+    }
+
+    public Calendar() {
+        super($(".MuiPickersLayout-root"));
     }
 
     @Step("Выбираем дату в календаре: {date}")

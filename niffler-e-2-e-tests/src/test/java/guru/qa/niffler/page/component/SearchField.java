@@ -10,12 +10,11 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class SearchField {
-    private final SelenideElement self;
+public class SearchField extends BaseComponent<SearchField> {
     private final SelenideElement clearBtn = $("#input-clear");
 
     public SearchField(SelenideElement self) {
-        this.self = self;
+        super(self);
     }
 
     @Step("Выполняем поиск по значению {query}")

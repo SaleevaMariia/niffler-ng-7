@@ -14,7 +14,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 @ParametersAreNonnullByDefault
-public class FriendsPage {
+public class FriendsPage extends BasePage<FriendsPage> {
 
     private final ElementsCollection friendRequests = $("tbody#requests").$$("tr");
     private final ElementsCollection friends = $("tbody#friends").$$("tr");
@@ -61,4 +61,11 @@ public class FriendsPage {
         friendsArea.shouldHave(text("There are no users yet"));
     }
 
+    @Override
+    @Nonnull
+    @Step("Проверяем, что страница с списком друзей отобразилась")
+    public FriendsPage checkThatPageLoaded() {
+        friendsArea.shouldBe(visible);
+        return this;
+    }
 }
