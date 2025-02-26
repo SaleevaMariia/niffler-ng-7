@@ -8,8 +8,12 @@ import guru.qa.niffler.data.repository.impl.SpendRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
+import io.qameta.allure.Step;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class SpendDbClient implements SpendClient {
     private static final Config CFG = Config.getInstance();
     private final SpendRepository spendRepository = new SpendRepositoryJdbc();
@@ -19,6 +23,8 @@ public class SpendDbClient implements SpendClient {
     );
 
     @Override
+    @Step("Создаем трату используя DB")
+    @Nonnull
     public SpendJson createSpend(SpendJson spend) {
         return xaTransactionTemplate.execute(() -> {
                     return SpendJson.fromEntity(
@@ -31,6 +37,8 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Создаем категорию используя DB")
+    @Nonnull
     public CategoryJson createCategory(CategoryJson category) {
         return xaTransactionTemplate.execute(() -> {
             return CategoryJson.fromEntity(
@@ -42,6 +50,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Удаляем трату используя DB")
     public void removeSpend(SpendJson spend) {
         xaTransactionTemplate.execute(() -> {
             spendRepository.remove(SpendEntity.fromJson(spend));
@@ -50,6 +59,7 @@ public class SpendDbClient implements SpendClient {
     }
 
     @Override
+    @Step("Удаляем категорию используя DB")
     public void removeCategory(CategoryJson category) {
         xaTransactionTemplate.execute(() -> {
             spendRepository.removeCategory(

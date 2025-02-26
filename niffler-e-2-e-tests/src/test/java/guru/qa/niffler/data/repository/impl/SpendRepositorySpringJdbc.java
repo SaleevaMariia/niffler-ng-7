@@ -12,15 +12,19 @@ import guru.qa.niffler.data.repository.SpendRepository;
 import guru.qa.niffler.data.tpl.DataSources;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class SpendRepositorySpringJdbc implements SpendRepository {
     private static final Config CFG = Config.getInstance();
     private final CategoryDao categoryDao = new CategoryDaoSpringJdbc();
     private final SpendDao spendDao = new SpendDaoSpringJdbc();
 
     @Override
+    @Nonnull
     public SpendEntity create(SpendEntity spend) {
         UUID categoryId = spend.getCategory().getId();
         if (categoryId == null || categoryDao.findCategoryById(categoryId) == null) {
@@ -30,12 +34,14 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     }
 
     @Override
+    @Nonnull
     public SpendEntity update(SpendEntity spend) {
         categoryDao.update(spend.getCategory());
         return spendDao.update(spend);
     }
 
     @Override
+    @Nonnull
     public CategoryEntity createCategory(CategoryEntity category) {
         return categoryDao.create(category);
     }

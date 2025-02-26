@@ -12,15 +12,19 @@ import guru.qa.niffler.data.repository.impl.AuthUserRepositoryJdbc;
 import guru.qa.niffler.data.repository.impl.UserdataRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.UserDataJson;
+import io.qameta.allure.Step;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
+@ParametersAreNonnullByDefault
 public class UserDbClient implements UsersClient {
     private static final Config CFG = Config.getInstance();
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -35,6 +39,8 @@ public class UserDbClient implements UsersClient {
 
 
     @Override
+    @Step("Создаем пользователя {username} используя DB")
+    @Nonnull
     public UserDataJson createUser(String username, String password) {
         return xaTransactionTemplate.execute(() -> {
             UserEntity user = userEntity(username, password);
@@ -44,6 +50,7 @@ public class UserDbClient implements UsersClient {
         });
     }
 
+    @Nonnull
     private UserDataEntity userDataEntity(String username) {
         UserDataEntity ue = new UserDataEntity();
         ue.setUsername(username);
@@ -51,6 +58,7 @@ public class UserDbClient implements UsersClient {
         return ue;
     }
 
+    @Step("Ищем пользователя {id} используя DB")
     public Optional<UserDataEntity> findById(UUID id) {
         return xaTransactionTemplate.execute(() -> {
             return userdataRepository.findById(id);
@@ -58,6 +66,7 @@ public class UserDbClient implements UsersClient {
     }
 
     @Override
+    @Step("Создаем входящее приглашение в друзья используя DB")
     public void createIncomeInvitation(UserDataJson targetUser, int count) {
         if (count > 0) {
             UserDataEntity targetEntity = userdataRepository.findById(
@@ -80,6 +89,7 @@ public class UserDbClient implements UsersClient {
     }
 
     @Override
+    @Step("Создаем исходящее приглашение в друзья используя DB")
     public void createOutcomeInvitation(UserDataJson targetUser, int count) {
         if (count > 0) {
             UserDataEntity targetEntity = userdataRepository.findById(
@@ -102,6 +112,7 @@ public class UserDbClient implements UsersClient {
     }
 
     @Override
+    @Step("Создаем друга используя DB")
     public void createFriends(UserDataJson targetUser, int count) {
         if (count > 0) {
             UserDataEntity targetEntity = userdataRepository.findById(
@@ -110,12 +121,12 @@ public class UserDbClient implements UsersClient {
 
             for (int i = 0; i < count; i++) {
                 xaTransactionTemplate.execute(() -> {
-                    final String username = randomUserName();
-                    System.out.println("username:" + username);
-                    UserEntity authuser = userEntity(username, "12345");
+                            final String username = randomUserName();
+                            System.out.println("username:" + username);
+                            UserEntity authuser = userEntity(username, "12345");
                             authUserRepository.create(authuser);
                             UserDataEntity user = userdataRepository.create(userDataEntity(username));
-                    userdataRepository.addFriend(targetEntity, user);
+                            userdataRepository.addFriend(targetEntity, user);
                             return null;
                         }
                 );
@@ -123,6 +134,7 @@ public class UserDbClient implements UsersClient {
         }
     }
 
+    @Nonnull
     private UserEntity userEntity(String username, String password) {
         UserEntity authUser = new UserEntity();
         authUser.setUsername(username);

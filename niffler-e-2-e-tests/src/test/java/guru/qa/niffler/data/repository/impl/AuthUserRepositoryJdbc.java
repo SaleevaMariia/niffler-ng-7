@@ -7,6 +7,8 @@ import guru.qa.niffler.data.entity.auth.UserEntity;
 import guru.qa.niffler.data.mapper.UserEntityRowMapper;
 import guru.qa.niffler.data.repository.AuthUserRepository;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,10 +20,12 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class AuthUserRepositoryJdbc implements AuthUserRepository {
     private static final Config CFG = Config.getInstance();
 
     @Override
+    @Nonnull
     public UserEntity create(UserEntity user) {
         try (PreparedStatement userPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"user\" (username, password, enabled," +
@@ -62,6 +66,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     }
 
     @Override
+    @Nonnull
     public UserEntity update(UserEntity user) {
         try (PreparedStatement userPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 """

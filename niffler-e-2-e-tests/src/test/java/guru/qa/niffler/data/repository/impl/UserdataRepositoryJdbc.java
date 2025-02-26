@@ -8,17 +8,21 @@ import guru.qa.niffler.data.entity.user.UserDataEntity;
 import guru.qa.niffler.data.mapper.UserDataEntityRowMapper;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.*;
 import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class UserdataRepositoryJdbc implements UserdataUserRepository {
     private static final Config CFG = Config.getInstance();
     private final UserdataUserDao udUserDao = new UserdataUserDaoJdbc();
 
     @Override
+    @Nonnull
     public UserDataEntity create(UserDataEntity user) {
 
         try (PreparedStatement userPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
@@ -135,6 +139,7 @@ public class UserdataRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
+    @Nonnull
     public UserDataEntity update(UserDataEntity user) {
         return udUserDao.update(user);
     }
