@@ -6,17 +6,11 @@ import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import io.qameta.allure.Step;
-import okhttp3.JavaNetCookieJar;
-import okhttp3.OkHttpClient;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -25,27 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
 public class UserApiClient implements UsersClient {
-    OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .cookieJar(new JavaNetCookieJar(
-                    new CookieManager(
-                            ThreadSafeCookieStore.INSTANCE,
-                            CookiePolicy.ACCEPT_ALL
-                    )
-            ))
-            .build();
-    private final Retrofit retrofitAuth = new Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(Config.getInstance().authUrl())
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-    private final UserApi userApiAuth = retrofitAuth.create(UserApi.class);
-    private final Retrofit retrofitUserdata = new Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(Config.getInstance().userdataUrl())
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-    private final UserApi userApiUserData = retrofitUserdata.create(UserApi.class);
-
+    private static final Config CFG = Config.getInstance();
+    private final UserApi userApiAuth = new RestClient
+            .EmtyRestClient(CFG.authUrl())
+            .retrofit()
+            .create(UserApi.class);
+    private final UserApi userApiUserData = new RestClient
+            .EmtyRestClient(CFG.userdataUrl())
+            .retrofit()
+            .create(UserApi.class);
 
     @Override
     @Step("Создаем пользователя {username} используя REST API")
@@ -57,12 +39,10 @@ public class UserApiClient implements UsersClient {
                     ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")).execute();
             response = userApiUserData.currentUser(username).execute();
             Instant start = Instant.now();
-            Instant finish = Instant.now();
-            while (Duration.between(start, finish).toMillis() < 1000) {
+            while (Duration.between(start, Instant.now()).toMillis() < 1000) {
                 response = userApiUserData.currentUser(username).execute();
-                finish = Instant.now();
                 if (response.body() != null && response.body().id() != null) {
-                    break;
+                    return response.body().addTestData(new TestData(password));
                 } else {
                     Thread.sleep(100);
                 }

@@ -27,7 +27,7 @@ public class ProfileTest {
     void archivedCategoryShouldPresentInCategoriesListWhenShowArchivedOn(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), defaultPassword).goToProfile()
+                .successLogin(user.username(), defaultPassword).getHeader().toProfilePage()
                 .clickArchivedSwitcher()
                 .checkThatCategoryVisible(categoryName);
     }
@@ -41,7 +41,7 @@ public class ProfileTest {
     void archivedCategoryShouldNotPresentInCategoriesListWhenShowArchivedOff(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), defaultPassword).goToProfile()
+                .successLogin(user.username(), defaultPassword).getHeader().toProfilePage()
                 .checkThatCategoryIsNotVisible(categoryName);
     }
 
@@ -53,7 +53,7 @@ public class ProfileTest {
         String categoryName = user.testData().categories().getFirst().name();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword)
-                .goToProfile()
+                .getHeader().toProfilePage()
                 .checkThatCategoryVisible(categoryName);
     }
 
@@ -65,9 +65,10 @@ public class ProfileTest {
         String categoryName = user.testData().categories().getFirst().name();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword)
-                .goToProfile()
+                .getHeader().toProfilePage()
                 .archiveCategoryByName(categoryName)
                 .clickArchivedSwitcher()
+                .checkAlertMessage("Category " + categoryName + " is archived")
                 .checkThatCategoryArchived(categoryName);
     }
 
@@ -81,9 +82,10 @@ public class ProfileTest {
         String categoryName = user.testData().categories().getFirst().name();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword)
-                .goToProfile()
+                .getHeader().toProfilePage()
                 .clickArchivedSwitcher()
                 .unArchiveCategoryByName(categoryName)
+                .checkAlertMessage("Category " + categoryName + " is unarchived")
                 .checkThatCategoryActive(categoryName);
     }
 
@@ -94,10 +96,11 @@ public class ProfileTest {
         String newName = randomUserName();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword)
-                .goToProfile()
+                .getHeader().toProfilePage()
                 .checkUsername(username)
                 .checkName("")
                 .changeName(newName)
+                .checkAlertMessage("Profile successfully updated")
                 .checkName(newName)
                 .checkUsername(username);
     }

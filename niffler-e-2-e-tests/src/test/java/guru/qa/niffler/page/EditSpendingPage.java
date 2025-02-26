@@ -43,12 +43,7 @@ public class EditSpendingPage extends BasePage<EditSpendingPage> {
     @Nonnull
     public EditSpendingPage setNewCurrency(Currency currency) {
         currencyBtn.click();
-        switch (currency) {
-            case EUR -> currencyList.find(text("EUR")).click();
-            case USD -> currencyList.find(text("USD")).click();
-            case KZT -> currencyList.find(text("KZT")).click();
-            default -> currencyList.find(text("RUB")).click();
-        }
+        currencyList.find(text(currency.name())).click();
         return this;
     }
 
@@ -74,7 +69,6 @@ public class EditSpendingPage extends BasePage<EditSpendingPage> {
         setNewCurrency(currency);
         setNewSpendingDescription(description);
         save();
-        checkAlertMessage("New spending is successfully created");
         return new MainPage();
     }
 

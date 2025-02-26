@@ -48,6 +48,7 @@ public class SpendingWebTest {
                 .successLogin(user.username(), user.testData().password())
                 .addNewSpendingClick().addNewSpending("300", category,
                         "add new spending", Currency.EUR)
+                .checkAlertMessage("New spending is successfully created")
                 .checkThatTableContainsSpending("add new spending");
     }
 }

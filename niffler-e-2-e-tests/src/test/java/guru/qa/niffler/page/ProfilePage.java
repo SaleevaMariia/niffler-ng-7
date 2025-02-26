@@ -8,10 +8,10 @@ import org.openqa.selenium.By;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+
 
 @ParametersAreNonnullByDefault
 public class ProfilePage extends BasePage<ProfilePage> {
@@ -68,14 +68,14 @@ public class ProfilePage extends BasePage<ProfilePage> {
     @Step("Проверяем что username равен {username}")
     @Nonnull
     public ProfilePage checkUsername(String username) {
-        username.equals(nameField.getValue());
+        nameField.shouldHave(value(username));
         return this;
     }
 
     @Step("Проверяем что имя пользователя равно {name}")
     @Nonnull
     public ProfilePage checkName(String name) {
-        name.equals(nameInput.getValue());
+        nameInput.shouldHave(value(name));
         return this;
     }
 
