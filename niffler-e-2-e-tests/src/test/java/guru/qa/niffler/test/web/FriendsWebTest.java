@@ -17,7 +17,8 @@ public class FriendsWebTest {
     void friendShouldBePresentInFriendsTable(UserDataJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .goToFriends()
+                .getHeader()
+                .toFriendsPage()
                 .checkPersonInFriends(user.testData().friendsUsernames()[0]);
     }
 
@@ -26,7 +27,8 @@ public class FriendsWebTest {
     void friendsTableShouldBeEmptyForNewUser(UserDataJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .goToFriends()
+                .getHeader()
+                .toFriendsPage()
                 .checkFriendsTableIsEmpty();
     }
 
@@ -35,7 +37,8 @@ public class FriendsWebTest {
     void incomeInvitationBePresentInFriendsTable(UserDataJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .goToFriends()
+                .getHeader()
+                .toFriendsPage()
                 .checkPersonInFriendsRequests(user.testData().incomeInvitationsUsernames()[0]);
     }
 
@@ -44,7 +47,8 @@ public class FriendsWebTest {
     void outcomeInvitationBePresentInAllPeoplesTable(UserDataJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .goToAllPeople()
+                .getHeader()
+                .toAllPeoplePage()
                 .checkPersonWasSentOutcomeRequest(user.testData().outcomeInvitationsUsernames()[0]);
     }
 
@@ -52,22 +56,27 @@ public class FriendsWebTest {
     @User(incomeInvitations = 1)
     @Test
     void userCanAcceptFriendInvitation(UserDataJson user) {
-        System.out.println(user.testData().incomeInvitationsUsernames()[0]);
+        String userWithInvitationsName = user.testData().incomeInvitationsUsernames()[0];
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .goToFriends()
-                .acceptFriendsRequest(user.testData().incomeInvitationsUsernames()[0])
-                .checkPersonInFriends(user.testData().incomeInvitationsUsernames()[0]);
+                .getHeader()
+                .toFriendsPage()
+                .acceptFriendsRequest(userWithInvitationsName)
+                .checkAlertMessage("Invitation of " + userWithInvitationsName + " accepted")
+                .checkPersonInFriends(userWithInvitationsName);
     }
 
     @User(incomeInvitations = 1)
     @Test
     void userCanDeclineFriendInvitation(UserDataJson user) {
+        String userWithInvitationsName = user.testData().incomeInvitationsUsernames()[0];
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .goToFriends()
-                .declineFriendsRequest(user.testData().incomeInvitationsUsernames()[0])
-                .checkPersonNotInFriends(user.testData().incomeInvitationsUsernames()[0]);
+                .getHeader()
+                .toFriendsPage()
+                .declineFriendsRequest(userWithInvitationsName)
+                .checkAlertMessage("Invitation of " + userWithInvitationsName + " is declined")
+                .checkPersonNotInFriends(userWithInvitationsName);
     }
 
 }

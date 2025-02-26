@@ -13,32 +13,21 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class MainPage {
+public class MainPage extends BasePage<MainPage> {
     private final SelenideElement statistics = $("#stat canvas");
     private final SelenideElement statComponent = $("#stat");
     private final SelenideElement addSpendingBtn = $("a[href='/spending']");
     private final Header header = new Header();
 
+    public Header getHeader() {
+        return header;
+    }
+
     private final SpendingTable spendingTable = new SpendingTable();
-
-    @Nonnull
-    public FriendsPage goToFriends() {
-        return header.toFriendsPage();
-    }
-
-    @Nonnull
-    public AllPeoplePage goToAllPeople() {
-        return header.toAllPeoplePage();
-    }
 
     @Nonnull
     public EditSpendingPage editSpending(String spendingDescription) {
         return spendingTable.editSpending(spendingDescription);
-    }
-
-    @Nonnull
-    public ProfilePage goToProfile() {
-        return header.toProfilePage();
     }
 
     @Nonnull

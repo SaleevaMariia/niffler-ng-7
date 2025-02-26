@@ -12,8 +12,16 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class Header {
-    private final SelenideElement self = $("#root header");
+public class Header extends BaseComponent<Header> {
+
+    public Header(SelenideElement self) {
+        super(self);
+    }
+
+    public Header() {
+        super($("#root header"));
+    }
+
     private final SelenideElement menuBtn = self.$("button");
     private final SelenideElement mainPage = self.$("a[href='/main']");
     private final SelenideElement addSpending = self.$("a[href='/spending']");

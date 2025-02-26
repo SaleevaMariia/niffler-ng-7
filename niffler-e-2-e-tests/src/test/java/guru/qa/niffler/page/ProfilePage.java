@@ -8,13 +8,13 @@ import org.openqa.selenium.By;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
+
 @ParametersAreNonnullByDefault
-public class ProfilePage {
+public class ProfilePage extends BasePage<ProfilePage> {
     private final SelenideElement showArchived = $("span.MuiSwitch-switchBase");
     private final ElementsCollection tableRows = $("div.MuiGrid-container", 1)
             .findAll("div.MuiGrid-item")
@@ -68,14 +68,14 @@ public class ProfilePage {
     @Step("Проверяем что username равен {username}")
     @Nonnull
     public ProfilePage checkUsername(String username) {
-        username.equals(nameField.getValue());
+        nameField.shouldHave(value(username));
         return this;
     }
 
     @Step("Проверяем что имя пользователя равно {name}")
     @Nonnull
     public ProfilePage checkName(String name) {
-        name.equals(nameInput.getValue());
+        nameInput.shouldHave(value(name));
         return this;
     }
 
@@ -97,5 +97,13 @@ public class ProfilePage {
     @Step("Проверяем что категория с именем {name} активна")
     public void checkThatCategoryActive(String name) {
         activeCategories.find(text(name)).shouldBe(visible);
+    }
+
+    @Override
+    @Nonnull
+    @Step("Проверяем, что страница профайла пользователя успешно отобразилась")
+    public ProfilePage checkThatPageLoaded() {
+        nameInput.shouldBe(visible);
+        return this;
     }
 }

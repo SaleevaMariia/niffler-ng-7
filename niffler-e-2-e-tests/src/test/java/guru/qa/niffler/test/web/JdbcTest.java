@@ -19,7 +19,6 @@ import java.util.Date;
 public class JdbcTest {
     static UsersClient userClient;
 
-    static
     @Test
     void daoTest() {
         SpendClient spendClient = new SpendDbClient();

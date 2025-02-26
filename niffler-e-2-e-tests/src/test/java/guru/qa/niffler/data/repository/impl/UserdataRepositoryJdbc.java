@@ -107,7 +107,7 @@ public class UserdataRepositoryJdbc implements UserdataUserRepository {
         )) {
             friendPs.setObject(1, requester.getId());
             friendPs.setObject(2, addressee.getId());
-            friendPs.setString(3, FriendshipStatus.INVITE_SENT.name());
+            friendPs.setString(3, FriendshipStatus.PENDING.name());
             friendPs.setDate(4, new Date(System.currentTimeMillis()));
             friendPs.executeUpdate();
 
@@ -124,13 +124,13 @@ public class UserdataRepositoryJdbc implements UserdataUserRepository {
         )) {
             friendPs.setObject(1, requester.getId());
             friendPs.setObject(2, addressee.getId());
-            friendPs.setString(3, FriendshipStatus.FRIEND.name());
+            friendPs.setString(3, FriendshipStatus.ACCEPTED.name());
             friendPs.setDate(4, new Date(System.currentTimeMillis()));
             friendPs.executeUpdate();
             friendPs.clearParameters();
             friendPs.setObject(1, addressee.getId());
             friendPs.setObject(2, requester.getId());
-            friendPs.setString(3, FriendshipStatus.FRIEND.name());
+            friendPs.setString(3, FriendshipStatus.ACCEPTED.name());
             friendPs.setDate(4, new Date(System.currentTimeMillis()));
             friendPs.executeUpdate();
         } catch (SQLException e) {

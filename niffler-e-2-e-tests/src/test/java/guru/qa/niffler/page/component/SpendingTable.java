@@ -15,8 +15,15 @@ import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class SpendingTable {
-    private final SelenideElement self = $("#spendings");
+public class SpendingTable extends BaseComponent<SpendingTable> {
+    public SpendingTable(SelenideElement self) {
+        super(self);
+    }
+
+    public SpendingTable() {
+        super($("#spendings"));
+    }
+
     private final SearchField search = new SearchField(self.$("input[placeholder='Search'"));
     private final ElementsCollection tableRows = self.$("tbody").$$("tr");
 
