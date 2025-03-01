@@ -1,5 +1,6 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
+import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;

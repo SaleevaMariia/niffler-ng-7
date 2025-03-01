@@ -1,4 +1,4 @@
-package guru.qa.niffler.service;
+package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.auth.Authority;
@@ -14,6 +14,7 @@ import guru.qa.niffler.data.repository.impl.UserdataRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserDataJson;
+import guru.qa.niffler.service.UsersClient;
 import io.qameta.allure.Step;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;

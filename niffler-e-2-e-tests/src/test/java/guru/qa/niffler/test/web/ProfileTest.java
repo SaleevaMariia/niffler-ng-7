@@ -14,6 +14,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
 
 @WebTest
+
 public class ProfileTest {
     private static final Config CFG = Config.getInstance();
 
