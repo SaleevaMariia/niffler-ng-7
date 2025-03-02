@@ -5,6 +5,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
+import java.util.List;
+
 public interface UserApi {
     @FormUrlEncoded
     @POST(value = "register")
@@ -18,6 +20,10 @@ public interface UserApi {
 
     @GET("internal/users/current")
     Call<UserDataJson> currentUser(@Query("username") String username);
+
+    @GET("/internal/users/all")
+    Call<List<UserDataJson>> allUsers(@Query("username") String username, @Query("searchQuery") String searchQuery);
+
 
     @POST("internal/invitations/send")
     Call<UserDataJson> sendInvitation(@Query("username") String username,

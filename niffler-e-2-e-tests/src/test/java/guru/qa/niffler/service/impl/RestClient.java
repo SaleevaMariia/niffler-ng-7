@@ -1,5 +1,6 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
+import guru.qa.niffler.api.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
 import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;

@@ -1,7 +1,8 @@
 package guru.qa.niffler.service;
 
-import guru.qa.niffler.api.UserApiClient;
 import guru.qa.niffler.model.UserDataJson;
+import guru.qa.niffler.service.impl.UserApiClient;
+import guru.qa.niffler.service.impl.UserDbClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;

@@ -1,5 +1,7 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
+import guru.qa.niffler.api.ThreadSafeCookieStore;
+import guru.qa.niffler.api.UserApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserDataJson;
@@ -13,6 +15,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 
 import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -123,5 +127,17 @@ public class UserApiClient implements UsersClient {
                 assertEquals(200, responseUser.code());
             }
         }
+    }
+
+    @Step("Возвращаем список всех пользователей используя REST API")
+    public List<UserDataJson> getAllUsers(String username, String searchQuery) {
+        Response<List<UserDataJson>> response;
+        try {
+            response = userApiUserData.allUsers(username, searchQuery).execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null ? response.body() : Collections.emptyList();
     }
 }

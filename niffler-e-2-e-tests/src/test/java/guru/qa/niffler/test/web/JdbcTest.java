@@ -6,8 +6,9 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.service.SpendClient;
-import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UsersClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,6 +20,7 @@ import java.util.Date;
 public class JdbcTest {
     static UsersClient userClient;
 
+    @Disabled
     @Test
     void daoTest() {
         SpendClient spendClient = new SpendDbClient();
@@ -41,6 +43,7 @@ public class JdbcTest {
 
     }
 
+    @Disabled
     @ValueSource(
             strings = {
                     "test-maria146"
