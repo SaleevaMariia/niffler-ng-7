@@ -4,6 +4,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.model.DataFilterValues;
 import guru.qa.niffler.page.EditSpendingPage;
+import guru.qa.niffler.page.MainPage;
 import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
@@ -28,10 +29,11 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
     private final ElementsCollection tableRows = self.$("tbody").$$("tr");
 
     private final SelenideElement deleteBtn = self.$("#delete");
-    private final SelenideElement deleteSpending = $$("button").find(text("Delete"));
+    private final SelenideElement deleteSpending = $$("div.MuiDialogActions-spacing button").find(text("Delete"));
     private final SelenideElement periodBtn = $("#period");
     private final ElementsCollection periods = $$("ul[role='listbox'] li");
     private final SelenideElement noSpending = $("div.MuiBox-root p");
+
 
     @Step("Редактируем описание на {description}")
     @Nonnull
@@ -43,12 +45,12 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
 
     @Step("Удаляем трату с описанием: {description}")
     @Nonnull
-    public SpendingTable deleteSpending(String description) {
+    public MainPage deleteSpending(String description) {
         searchSpendingByDescription(description);
         tableRows.find(text(description)).$("input").click();
         deleteBtn.click();
         deleteSpending.click();
-        return this;
+        return new MainPage();
     }
 
     @Step("Ищем трату с описанием: {description}")

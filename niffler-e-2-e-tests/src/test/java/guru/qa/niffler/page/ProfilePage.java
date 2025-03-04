@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.Header;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
@@ -28,6 +29,12 @@ public class ProfilePage extends BasePage<ProfilePage> {
     private final SelenideElement nameInput = $("#name");
     private final SelenideElement saveBtn = $$("button").find(text("Save changes"));
     private final SelenideElement nameField = $("#username");
+
+    private final Header header = new Header();
+
+    public Header getHeader() {
+        return header;
+    }
 
     @Step("Нажимаем кнопку Показать/скрыть архивные категории")
     @Nonnull
@@ -94,10 +101,6 @@ public class ProfilePage extends BasePage<ProfilePage> {
         archivedCategories.find(text(name)).shouldBe(visible);
     }
 
-    @Step("Проверяем что категория с именем {name} активна")
-    public void checkThatCategoryActive(String name) {
-        activeCategories.find(text(name)).shouldBe(visible);
-    }
 
     @Override
     @Nonnull
@@ -105,5 +108,10 @@ public class ProfilePage extends BasePage<ProfilePage> {
     public ProfilePage checkThatPageLoaded() {
         nameInput.shouldBe(visible);
         return this;
+    }
+
+    @Step("Переходим на ")
+    public void checkThatCategoryActive(String name) {
+        activeCategories.find(text(name)).shouldBe(visible);
     }
 }

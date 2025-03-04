@@ -3,14 +3,22 @@ package guru.qa.niffler.test.web;
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import org.junit.jupiter.api.Test;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import static com.codeborne.selenide.Selenide.$;
 import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 @WebTest
@@ -104,6 +112,24 @@ public class ProfileTest {
                 .checkAlertMessage("Profile successfully updated")
                 .checkName(newName)
                 .checkUsername(username);
+    }
+
+    @ScreenShotTest(value = "img/avatar.png")
+    void checkAvatar(BufferedImage expected) throws IOException {
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLogin("maria", "123456")
+                .getHeader().toProfilePage().checkThatPageLoaded();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        BufferedImage actual = ImageIO.read($("#image__input + div img").screenshot());
+        assertFalse(new ScreenDiffResult(
+                actual,
+                expected
+        ));
     }
 
 }
