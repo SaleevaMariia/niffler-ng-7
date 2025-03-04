@@ -10,17 +10,13 @@ import guru.qa.niffler.model.Currency;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
-import guru.qa.niffler.utils.ScreenDiffResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static com.codeborne.selenide.Selenide.$;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(BrowserExtension.class)
 public class SpendingWebTest {
@@ -72,13 +68,8 @@ public class SpendingWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .waitToLoadAll()
-                .checkLegendsContainsName("Обучение");
-
-        BufferedImage actual = ImageIO.read($("#stat canvas").screenshot());
-        assertFalse(new ScreenDiffResult(
-                actual,
-                expected
-        ));
+                .checkLegendsContainsName("Обучение")
+                .checkStatComponentImage(expected);
     }
 
     @User(
@@ -101,13 +92,8 @@ public class SpendingWebTest {
                 .checkLegendsContainsName("Обучение", "Отдых")
                 .getSpendingTable().deleteSpending("Спа-отель")
                 .waitToLoadAll()
-                .checkLegendsContainsName("Обучение");
-
-        BufferedImage actual = ImageIO.read($("#stat canvas").screenshot());
-        assertFalse(new ScreenDiffResult(
-                actual,
-                expected
-        ));
+                .checkLegendsContainsName("Обучение")
+                .checkStatComponentImage(expected);
     }
 
     @User(
@@ -128,14 +114,8 @@ public class SpendingWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .waitToLoadAll()
-                .checkLegendsContainsName("Обучение", "Отдых");
-
-
-        BufferedImage actual = ImageIO.read($("#stat canvas").screenshot());
-        assertFalse(new ScreenDiffResult(
-                actual,
-                expected
-        ));
+                .checkLegendsContainsName("Обучение", "Отдых")
+                .checkStatComponentImage(expected);
     }
 
     @User(
@@ -159,13 +139,8 @@ public class SpendingWebTest {
                 .checkLegendsContainsName("Обучение", "Отдых")
                 .getSpendingTable().editSpending("Спа-отель").setNewCategory("Массаж").save()
                 .waitToLoadAll()
-                .checkLegendsContainsName("Обучение", "Массаж");
-
-        BufferedImage actual = ImageIO.read($("#stat canvas").screenshot());
-        assertFalse(new ScreenDiffResult(
-                actual,
-                expected
-        ));
+                .checkLegendsContainsName("Обучение", "Массаж")
+                .checkStatComponentImage(expected);
     }
 
     @User(
@@ -190,13 +165,8 @@ public class SpendingWebTest {
                 .getHeader()
                 .toMainPage()
                 .waitToLoadAll()
-                .checkLegendsContainsName("Отдых", "Archived");
-
-        BufferedImage actual = ImageIO.read($("#stat canvas").screenshot());
-        assertFalse(new ScreenDiffResult(
-                actual,
-                expected
-        ));
+                .checkLegendsContainsName("Отдых", "Archived")
+                .checkStatComponentImage(expected);
     }
 }
 

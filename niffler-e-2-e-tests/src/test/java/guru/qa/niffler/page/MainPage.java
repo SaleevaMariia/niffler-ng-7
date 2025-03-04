@@ -4,15 +4,20 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.Header;
 import guru.qa.niffler.page.component.SpendingTable;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
+import lombok.SneakyThrows;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
 public class MainPage extends BasePage<MainPage> {
@@ -81,4 +86,15 @@ public class MainPage extends BasePage<MainPage> {
         return this;
     }
 
+    @SneakyThrows
+    @Step("Проверяем, картинку с статистикой  по категориям")
+    @Nonnull
+    public MainPage checkStatComponentImage(BufferedImage expected) {
+        BufferedImage actual = ImageIO.read($("#stat canvas").screenshot());
+        assertFalse(new ScreenDiffResult(
+                actual,
+                expected
+        ));
+        return this;
+    }
 }

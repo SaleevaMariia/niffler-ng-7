@@ -3,15 +3,20 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
+import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 @ParametersAreNonnullByDefault
@@ -107,6 +112,18 @@ public class ProfilePage extends BasePage<ProfilePage> {
     @Step("Проверяем, что страница профайла пользователя успешно отобразилась")
     public ProfilePage checkThatPageLoaded() {
         nameInput.shouldBe(visible);
+        return this;
+    }
+
+    @SneakyThrows
+    @Step("Проверяем аватарку")
+    @Nonnull
+    public ProfilePage checkAvatarImage(BufferedImage expected) {
+        BufferedImage actual = ImageIO.read($("#image__input + div img").screenshot());
+        assertFalse(new ScreenDiffResult(
+                actual,
+                expected
+        ));
         return this;
     }
 
