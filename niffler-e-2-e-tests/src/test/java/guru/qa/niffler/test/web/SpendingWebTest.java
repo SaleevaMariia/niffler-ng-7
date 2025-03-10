@@ -1,6 +1,7 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
@@ -67,9 +68,10 @@ public class SpendingWebTest {
     void checkStatComponentWithOneSpendTest(UserDataJson user, BufferedImage expected) throws IOException {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .waitToLoadAll()
-                .checkLegendsContainsName("Обучение")
-                .checkStatComponentImage(expected);
+                .getStatComponent()
+                .checkStatisticBubblesContains("Обучение 79990 ₽")
+                .checkStatisticImage(expected)
+                .checkBubbles(Color.yellow);
     }
 
     @User(
@@ -89,11 +91,16 @@ public class SpendingWebTest {
     void checkStatComponentAfterSpendDeletedTest(UserDataJson user, BufferedImage expected) throws IOException {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .checkLegendsContainsName("Обучение", "Отдых")
-                .getSpendingTable().deleteSpending("Спа-отель")
-                .waitToLoadAll()
-                .checkLegendsContainsName("Обучение")
-                .checkStatComponentImage(expected);
+                .getStatComponent()
+                .checkStatisticBubblesContains("Обучение 79990 ₽", "Отдых 30000 ₽")
+                .checkBubbles(Color.yellow, Color.green);
+
+        new MainPage().getSpendingTable()
+                .deleteSpending("Спа-отель")
+                .getStatComponent()
+                .checkStatisticBubblesContains("Обучение 79990 ₽")
+                .checkStatisticImage(expected)
+                .checkBubbles(Color.yellow);
     }
 
     @User(
@@ -113,9 +120,10 @@ public class SpendingWebTest {
     void checkStatComponentTwoSpendsTest(UserDataJson user, BufferedImage expected) throws IOException {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .waitToLoadAll()
-                .checkLegendsContainsName("Обучение", "Отдых")
-                .checkStatComponentImage(expected);
+                .getStatComponent()
+                .checkStatisticBubblesContains("Обучение 79990 ₽", "Отдых 30000 ₽")
+                .checkStatisticImage(expected)
+                .checkBubbles(Color.yellow, Color.green);
     }
 
     @User(
@@ -135,12 +143,11 @@ public class SpendingWebTest {
     void checkStatComponentAfterSpendEditTest(UserDataJson user, BufferedImage expected) throws IOException {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
-                .waitToLoadAll()
-                .checkLegendsContainsName("Обучение", "Отдых")
                 .getSpendingTable().editSpending("Спа-отель").setNewCategory("Массаж").save()
-                .waitToLoadAll()
-                .checkLegendsContainsName("Обучение", "Массаж")
-                .checkStatComponentImage(expected);
+                .getStatComponent()
+                .checkStatisticBubblesContains("Обучение 79990 ₽", "Массаж 30000 ₽")
+                .checkStatisticImage(expected)
+                .checkBubbles(Color.yellow, Color.green);
     }
 
     @User(
@@ -164,9 +171,10 @@ public class SpendingWebTest {
                 .archiveCategoryByName("Обучение")
                 .getHeader()
                 .toMainPage()
-                .waitToLoadAll()
-                .checkLegendsContainsName("Отдых", "Archived")
-                .checkStatComponentImage(expected);
+                .getStatComponent()
+                .checkStatisticBubblesContains("Отдых 30000 ₽", "Archived 79990 ₽")
+                .checkStatisticImage(expected)
+                .checkBubbles(Color.yellow, Color.green);
     }
 }
 

@@ -4,39 +4,27 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.Header;
 import guru.qa.niffler.page.component.SpendingTable;
-import guru.qa.niffler.utils.ScreenDiffResult;
+import guru.qa.niffler.page.component.StatComponent;
 import io.qameta.allure.Step;
-import lombok.SneakyThrows;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
+@Getter
 public class MainPage extends BasePage<MainPage> {
-    private final SelenideElement statistics = $("#stat canvas");
-    private final SelenideElement statComponent = $("#stat");
+    public static final String URL = CFG.frontUrl() + "main";
     private final SelenideElement addSpendingBtn = $("a[href='/spending']");
-
     private final ElementsCollection legends = $$("#legend-container li");
     private final Header header = new Header();
-
-    public Header getHeader() {
-        return header;
-    }
-
+    private final StatComponent statComponent = new StatComponent();
     private final SpendingTable spendingTable = new SpendingTable();
-
-    public SpendingTable getSpendingTable() {
-        return spendingTable;
-    }
 
     @Nonnull
     public EditSpendingPage editSpending(String spendingDescription) {
@@ -55,46 +43,15 @@ public class MainPage extends BasePage<MainPage> {
 
     @Step("Проверяем, что у нового пользователя нет трат")
     public void checkNewUserLogin() {
-        statistics.should(visible);
+        statComponent.getSelf().should(visible).shouldHave(text("Statistics"));
         spendingTable.checkTableSize(0);
     }
 
     @Step("Проверяем, что пользователь успешно зашел в аккаунт")
     @Nonnull
     public MainPage checkThatPageLoaded() {
-        statComponent.should(visible).shouldHave(text("Statistics"));
+        statComponent.getSelf().should(visible).shouldHave(text("Statistics"));
         return this;
     }
 
-    @Step("Ждем прогрузки статической компоненты")
-    @Nonnull
-    public MainPage waitToLoadAll() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        return this;
-    }
-
-    @Step("Проверяем, что в ячейках под статистикой есть блоки")
-    @Nonnull
-    public MainPage checkLegendsContainsName(String... names) {
-        for (String name : names) {
-            legends.filter(text(name)).first().shouldBe(visible);
-        }
-        return this;
-    }
-
-    @SneakyThrows
-    @Step("Проверяем, картинку с статистикой  по категориям")
-    @Nonnull
-    public MainPage checkStatComponentImage(BufferedImage expected) {
-        BufferedImage actual = ImageIO.read($("#stat canvas").screenshot());
-        assertFalse(new ScreenDiffResult(
-                actual,
-                expected
-        ));
-        return this;
-    }
 }
