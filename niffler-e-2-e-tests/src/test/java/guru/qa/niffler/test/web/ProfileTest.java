@@ -1,6 +1,6 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
@@ -8,6 +8,7 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.utils.SelenideUtils;
 import org.junit.jupiter.api.Test;
 
 import java.awt.image.BufferedImage;
@@ -21,7 +22,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
 public class ProfileTest {
     private static final Config CFG = Config.getInstance();
-
+    SelenideDriver driver = new SelenideDriver(SelenideUtils.chromeConfig);
 
     @User(
             categories = @Category(
@@ -31,7 +32,7 @@ public class ProfileTest {
     @Test
     void archivedCategoryShouldPresentInCategoriesListWhenShowArchivedOn(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword).getHeader().toProfilePage()
                 .clickArchivedSwitcher()
                 .checkThatCategoryVisible(categoryName);
@@ -45,7 +46,7 @@ public class ProfileTest {
     @Test
     void archivedCategoryShouldNotPresentInCategoriesListWhenShowArchivedOff(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword).getHeader().toProfilePage()
                 .checkThatCategoryIsNotVisible(categoryName);
     }
@@ -56,7 +57,7 @@ public class ProfileTest {
     @Test
     void activeCategoryShouldPresentInCategoriesList(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword)
                 .getHeader().toProfilePage()
                 .checkThatCategoryVisible(categoryName);
@@ -68,7 +69,7 @@ public class ProfileTest {
     @Test
     void activeCategoryCanBeArchivedInProfile(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword)
                 .getHeader().toProfilePage()
                 .archiveCategoryByName(categoryName)
@@ -85,7 +86,7 @@ public class ProfileTest {
     @Test
     void archivedCategoryCanBeActivatedInProfile(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword)
                 .getHeader().toProfilePage()
                 .clickArchivedSwitcher()
@@ -99,7 +100,7 @@ public class ProfileTest {
     void nameCanBeChangedInProfile(UserDataJson user) {
         String username = user.username();
         String newName = randomUserName();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), defaultPassword)
                 .getHeader().toProfilePage()
                 .checkUsername(username)
@@ -112,7 +113,7 @@ public class ProfileTest {
 
     @ScreenShotTest(value = "img/avatar.png")
     void checkAvatar(BufferedImage expected) throws IOException {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin("maria", "123456")
                 .getHeader().toProfilePage().checkThatPageLoaded()
                 .checkAvatarImage(expected);
