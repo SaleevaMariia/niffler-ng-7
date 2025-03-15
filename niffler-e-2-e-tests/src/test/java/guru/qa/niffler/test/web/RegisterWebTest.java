@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class RegisterWebTest {
     private static final Config CFG = Config.getInstance();
     SelenideDriver driver = new SelenideDriver(SelenideUtils.chromeConfig);
+
     @Test
     void shouldRegisterNewUser() {
         final String login = RandomDataUtils.randomEmail();
