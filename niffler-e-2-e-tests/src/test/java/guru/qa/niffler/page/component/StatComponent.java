@@ -4,6 +4,7 @@ import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.condition.Bubble;
 import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.jupiter.extension.ScreenShotTestExtension;
 import guru.qa.niffler.utils.ScreenDiffResult;
@@ -16,14 +17,14 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import static com.codeborne.selenide.Selenide.$;
-import static guru.qa.niffler.condition.StatConditions.color;
+import static guru.qa.niffler.condition.StatConditions.*;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
 public class StatComponent extends BaseComponent<StatComponent> {
 
-    private final ElementsCollection bubbles = self.$("#legend-container").$$("li");
+    private final ElementsCollection bubblesElements = self.$("#legend-container").$$("li");
     private final SelenideElement chart = $("canvas[role='img']");
     public StatComponent() {
         super($("#stat"));
@@ -32,7 +33,7 @@ public class StatComponent extends BaseComponent<StatComponent> {
     @Step("Проверяем что кружки статистики содержат текст {0}")
     @Nonnull
     public StatComponent checkStatisticBubblesContains(String... texts) {
-        bubbles.should(CollectionCondition.texts(texts));
+        bubblesElements.should(CollectionCondition.texts(texts));
         return this;
     }
 
@@ -59,7 +60,28 @@ public class StatComponent extends BaseComponent<StatComponent> {
     @Step("Проверяем что кружки статистики содержат цвет {expectedColors}")
     @Nonnull
     public StatComponent checkBubbles(Color... expectedColors) {
-        bubbles.should(color(expectedColors));
+        bubblesElements.should(color(expectedColors));
+        return this;
+    }
+
+    @Step("Проверяем что кружки статистики содержат цвет и текст {expectedBubbles}")
+    @Nonnull
+    public StatComponent checkBubbles(Bubble... expectedBubbles) {
+        bubblesElements.should(statBubbles(expectedBubbles));
+        return this;
+    }
+
+    @Step("Проверяем что кружки статистики содержат цвет и текст {expectedBubbles} в произвольном порядке")
+    @Nonnull
+    public StatComponent checkBubblesInAnyOrder(Bubble... expectedBubbles) {
+        bubblesElements.should(statBubblesInAnyOrder(expectedBubbles));
+        return this;
+    }
+
+    @Step("Проверяем что кружки статистики содержат цвет и текст {expectedBubbles}")
+    @Nonnull
+    public StatComponent checkBubblesContains(Bubble... expectedBubbles) {
+        bubblesElements.should(statBubblesContains(expectedBubbles));
         return this;
     }
 }
