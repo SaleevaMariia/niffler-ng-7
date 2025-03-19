@@ -29,8 +29,8 @@ public class BrowserExtension implements
 
   @Override
   public void afterEach(ExtensionContext context) throws Exception {
-    if (driver.get().hasWebDriverStarted()) {
-      driver.get().close();
+    if (driver().hasWebDriverStarted()) {
+      driver().close();
     }
   }
 
@@ -61,11 +61,11 @@ public class BrowserExtension implements
   }
 
   private void doScreenshot() {
-    if (driver.get().hasWebDriverStarted()) {
+    if (driver().hasWebDriverStarted()) {
       Allure.addAttachment(
-              "Screen on fail for browser" + driver.get().getSessionId(),
+              "Screen on fail for browser" + driver().getSessionId(),
               new ByteArrayInputStream(
-                      ((TakesScreenshot) driver.get().getWebDriver()).getScreenshotAs(OutputType.BYTES)
+                      ((TakesScreenshot) driver().getWebDriver()).getScreenshotAs(OutputType.BYTES)
               )
       );
     }

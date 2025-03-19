@@ -14,8 +14,8 @@ public class BrowserConverter implements ArgumentConverter {
         }
         SelenideDriver driver;
         switch (browser) {
-            case CHROME -> driver = new SelenideDriver(SelenideUtils.chromeConfig);
-            case FIREFOX -> driver = new SelenideDriver(SelenideUtils.firefoxConfig);
+            case CHROME -> driver = new SelenideDriver(Browser.chromeConfig);
+            case FIREFOX -> driver = new SelenideDriver(Browser.firefoxConfig);
             default -> throw new IllegalArgumentException(
                     "Don't know this browser yet: " + source);
         }
