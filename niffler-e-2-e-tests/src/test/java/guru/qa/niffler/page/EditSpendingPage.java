@@ -2,8 +2,9 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.model.Currency;
+import guru.qa.niffler.page.component.Header;
 import io.qameta.allure.Step;
-import jaxb.userdata.Currency;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -22,6 +23,12 @@ public class EditSpendingPage extends BasePage<EditSpendingPage> {
     private final SelenideElement currencyBtn = $("#currency");
     private final ElementsCollection currencyList = $$("ul[role='listbox'] li");
     private final SelenideElement categoryInput = $("#category");
+
+    private final Header header = new Header();
+
+    public Header getHeader() {
+        return header;
+    }
 
     @Step("Устанавливаем описание траты равным {description}")
     @Nonnull
@@ -73,8 +80,9 @@ public class EditSpendingPage extends BasePage<EditSpendingPage> {
     }
 
     @Step("Нажимаем на кнопку сохранить")
-    public void save() {
+    public MainPage save() {
         saveBtn.click();
+        return new MainPage();
     }
 
     @Override

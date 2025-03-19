@@ -17,6 +17,7 @@ public class LoginPage extends BasePage<LoginPage> {
     private final SelenideElement passwordInput = $("input[name='password']");
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement createButton = $("a.form__register");
+    private final SelenideElement canvas = $("div.MuiBox-root canvas[role='img']");
     private final SelenideElement errorBadCredentials = $("div.form__error-container > p.form__error");
 
     @Step("Авторизуемся под пользователем {username}")
