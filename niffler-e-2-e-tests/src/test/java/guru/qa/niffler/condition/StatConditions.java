@@ -40,6 +40,12 @@ public class StatConditions {
         return new WebElementsCondition() {
 
             private final String expectedRgba = Arrays.stream(expectedColors).map(c -> c.rgb).toList().toString();
+            private String errorMessage = "Collection check failed";
+
+            @Override
+            public String errorMessage() {
+                return errorMessage;
+            }
 
             @NotNull
             @Override
@@ -48,8 +54,8 @@ public class StatConditions {
                     throw new IllegalArgumentException("No expected colors given");
                 }
                 if (expectedColors.length != elements.size()) {
-                    final String message = String.format("List size mismatch (expected: %s, actual: %s)", expectedColors.length, elements.size());
-                    return rejected(message, elements);
+                    errorMessage = String.format("List size mismatch (expected: %s, actual: %s)", expectedColors.length, elements.size());
+                    return rejected(errorMessage, elements);
                 }
 
                 boolean passed = true;
@@ -66,10 +72,10 @@ public class StatConditions {
 
                 if (!passed) {
                     final String actualRgba = actualRgbaList.toString();
-                    final String message = String.format(
+                    errorMessage = String.format(
                             "List colors mismatch (expected: %s, actual: %s)", expectedRgba, actualRgba
                     );
-                    return rejected(message, actualRgba);
+                    return rejected(errorMessage, actualRgba);
                 }
                 return accepted();
             }
@@ -101,6 +107,12 @@ public class StatConditions {
     @Nonnull
     public static WebElementsCondition statBubbles(@Nonnull Bubble... expectedBubbles) {
         return new WebElementsCondition() {
+            private String errorMessage = "Collection check failed";
+
+            @Override
+            public String errorMessage() {
+                return errorMessage;
+            }
 
             private final String expectedBubblesStr =
                     Arrays.stream(expectedBubbles)
@@ -115,8 +127,8 @@ public class StatConditions {
                     throw new IllegalArgumentException("No expected bubbles given");
                 }
                 if (expectedBubbles.length != elements.size()) {
-                    final String message = String.format("List size mismatch (expected: %s, actual: %s)", expectedBubbles.length, elements.size());
-                    return rejected(message, elements);
+                    errorMessage = String.format("List size mismatch (expected: %s, actual: %s)", expectedBubbles.length, elements.size());
+                    return rejected(errorMessage, elements);
                 }
 
                 boolean passed = true;
@@ -134,10 +146,10 @@ public class StatConditions {
                 }
 
                 if (!passed) {
-                    final String message = String.format(
+                    errorMessage = String.format(
                             "List bubbles mismatch (expected: %s, actual: %s)", expectedBubblesStr, actualBubble
                     );
-                    return rejected(message, actualBubble);
+                    return rejected(errorMessage, actualBubble);
                 }
                 return accepted();
             }
@@ -152,6 +164,12 @@ public class StatConditions {
     @Nonnull
     public static WebElementsCondition statBubblesInAnyOrder(@Nonnull Bubble... expectedBubbles) {
         return new WebElementsCondition() {
+            private String errorMessage = "Collection check failed";
+
+            @Override
+            public String errorMessage() {
+                return errorMessage;
+            }
 
             private final String expectedBubblesStr =
                     Arrays.stream(expectedBubbles)
@@ -166,8 +184,8 @@ public class StatConditions {
                     throw new IllegalArgumentException("No expected bubbles given");
                 }
                 if (expectedBubbles.length != elements.size()) {
-                    final String message = String.format("List size mismatch (expected: %s, actual: %s)", expectedBubbles.length, elements.size());
-                    return rejected(message, elements);
+                    errorMessage = String.format("List size mismatch (expected: %s, actual: %s)", expectedBubbles.length, elements.size());
+                    return rejected(errorMessage, elements);
                 }
 
                 boolean passed = true;
@@ -189,10 +207,10 @@ public class StatConditions {
                 }
 
                 if (!mainFlag) {
-                    final String message = String.format(
+                    errorMessage = String.format(
                             "List bubbles mismatch (expected: %s, actual: %s)", expectedBubblesStr, actualBubble
                     );
-                    return rejected(message, actualBubble);
+                    return rejected(errorMessage, actualBubble);
                 }
                 return accepted();
             }
@@ -207,6 +225,12 @@ public class StatConditions {
     @Nonnull
     public static WebElementsCondition statBubblesContains(@Nonnull Bubble... expectedBubbles) {
         return new WebElementsCondition() {
+            private String errorMessage = "Collection check failed";
+
+            @Override
+            public String errorMessage() {
+                return errorMessage;
+            }
 
             private final String expectedBubblesStr =
                     Arrays.stream(expectedBubbles)
@@ -221,8 +245,8 @@ public class StatConditions {
                     throw new IllegalArgumentException("No expected bubbles given");
                 }
                 if (expectedBubbles.length > elements.size()) {
-                    final String message = String.format("List size too big (expected: %s, actual: %s)", expectedBubbles.length, elements.size());
-                    return rejected(message, elements);
+                    errorMessage = String.format("List size too big (expected: %s, actual: %s)", expectedBubbles.length, elements.size());
+                    return rejected(errorMessage, elements);
                 }
 
                 boolean passed = true;
@@ -247,10 +271,10 @@ public class StatConditions {
                 }
 
                 if (!mainFlag) {
-                    final String message = String.format(
+                    errorMessage = String.format(
                             "List bubbles doesn't contain some bubbles (expected: %s, actual: %s)", expectedBubblesStr, actualBubble
                     );
-                    return rejected(message, actualBubble);
+                    return rejected(errorMessage, actualBubble);
                 }
                 return accepted();
             }

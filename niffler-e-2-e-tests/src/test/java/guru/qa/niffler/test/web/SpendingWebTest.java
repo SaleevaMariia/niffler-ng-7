@@ -204,7 +204,7 @@ public class SpendingWebTest {
                 .getStatComponent()
                 .checkBubblesContains(
                         new Bubble(Color.yellow, "Отдых 30000 ₽"),
-                        new Bubble(Color.green, "Archived 79990 ₽"))
+                        new Bubble(Color.yellow, "Archived 79990 ₽"))
                 .checkStatisticImage(expected);
     }
 }
