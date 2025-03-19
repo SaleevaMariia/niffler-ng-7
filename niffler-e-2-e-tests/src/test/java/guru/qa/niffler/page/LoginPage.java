@@ -1,5 +1,7 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
@@ -8,17 +10,32 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
 public class LoginPage extends BasePage<LoginPage> {
 
-    private final SelenideElement usernameInput = $("input[name='username']");
-    private final SelenideElement passwordInput = $("input[name='password']");
-    private final SelenideElement submitButton = $("button[type='submit']");
-    private final SelenideElement createButton = $("a.form__register");
-    private final SelenideElement canvas = $("div.MuiBox-root canvas[role='img']");
-    private final SelenideElement errorBadCredentials = $("div.form__error-container > p.form__error");
+    private final SelenideElement usernameInput;
+    private final SelenideElement passwordInput;
+    private final SelenideElement submitButton;
+    private final SelenideElement createButton;
+    private final SelenideElement errorBadCredentials;
+
+    public LoginPage(SelenideDriver driver) {
+        super(driver);
+        this.usernameInput = driver.$("input[name='username']");
+        this.passwordInput = driver.$("input[name='password']");
+        this.submitButton = driver.$("button[type='submit']");
+        this.createButton = driver.$("a.form__register");
+        this.errorBadCredentials = driver.$("div.form__error-container > p.form__error");
+    }
+
+    public LoginPage() {
+        this.usernameInput = Selenide.$("input[name='username']");
+        this.passwordInput = Selenide.$("input[name='password']");
+        this.submitButton = Selenide.$("button[type='submit']");
+        this.createButton = Selenide.$("a.form__register");
+        this.errorBadCredentials = Selenide.$("div.form__error-container > p.form__error");
+    }
 
     @Step("Авторизуемся под пользователем {username}")
     @Nonnull
@@ -44,7 +61,7 @@ public class LoginPage extends BasePage<LoginPage> {
     @Nonnull
     public LoginPage loginWithBadCredentials(String username, String password) {
         login(username, password);
-        return new LoginPage();
+        return this;
     }
 
     @Step("Проверяем, что при введении не корректного пароля не происходит переход в аккаунт")

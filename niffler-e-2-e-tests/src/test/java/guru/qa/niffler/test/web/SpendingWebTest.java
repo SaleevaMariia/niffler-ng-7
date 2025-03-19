@@ -1,6 +1,6 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.condition.Bubble;
 import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.config.Config;
@@ -13,6 +13,7 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
+import guru.qa.niffler.utils.SelenideUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -26,7 +27,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 public class SpendingWebTest {
 
     private static final Config CFG = Config.getInstance();
-
+    SelenideDriver driver = new SelenideDriver(SelenideUtils.chromeConfig);
     @User(
             spendings = @Spending(
                     category = "Обучение",
@@ -39,7 +40,7 @@ public class SpendingWebTest {
         final String newDescription = "Обучение Niffler Next Generation";
         String spendDescription = user.testData().spendings().getFirst().description();
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .editSpending(spendDescription)
                 .setNewSpendingDescription(newDescription)
@@ -58,7 +59,7 @@ public class SpendingWebTest {
     @Test
     void addNewSpendingShouldBeAvailable(UserDataJson user) {
         String category = randomUserName();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .addNewSpendingClick().addNewSpending("300", category,
                         "add new spending", CurrencyValues.EUR)
@@ -81,7 +82,7 @@ public class SpendingWebTest {
     )
     @ScreenShotTest(value = "img/one_spend.png")
     void checkStatComponentWithOneSpendTest(UserDataJson user, BufferedImage expected) throws IOException {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getStatComponent()
                 .checkBubbles(new Bubble(Color.yellow, "Обучение 79990 ₽"))
@@ -103,7 +104,7 @@ public class SpendingWebTest {
     )
     @ScreenShotTest(value = "img/one_spend.png")
     void checkStatComponentAfterSpendDeletedTest(UserDataJson user, BufferedImage expected) throws IOException {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getStatComponent()
                 .checkBubblesInAnyOrder(new Bubble(Color.green, "Отдых 30000 ₽"),
@@ -131,7 +132,7 @@ public class SpendingWebTest {
     )
     @ScreenShotTest(value = "img/two_spend.png")
     void checkStatComponentTwoSpendsTest(UserDataJson user, BufferedImage expected) throws IOException {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getStatComponent()
                 .checkBubbles(new Bubble(Color.yellow, "Обучение 79990 ₽"),
@@ -155,7 +156,7 @@ public class SpendingWebTest {
     )
     @ScreenShotTest(value = "img/two_edited_spend.png")
     void checkStatComponentAfterSpendEditTest(UserDataJson user, BufferedImage expected) throws IOException {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getSpendingTable().editSpending("Спа-отель").setNewCategory("Массаж").save()
                 .getSpendingTable().checkSpendings(
@@ -195,7 +196,7 @@ public class SpendingWebTest {
     )
     @ScreenShotTest(value = "img/two_other_spend.png")
     void checkStatComponentNoArchiveCategoryTest(UserDataJson user, BufferedImage expected) throws IOException {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getHeader().toProfilePage()
                 .archiveCategoryByName("Обучение")

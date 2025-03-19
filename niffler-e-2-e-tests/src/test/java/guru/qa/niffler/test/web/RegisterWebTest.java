@@ -1,22 +1,24 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.utils.RandomDataUtils;
+import guru.qa.niffler.utils.SelenideUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(BrowserExtension.class)
 public class RegisterWebTest {
     private static final Config CFG = Config.getInstance();
+    SelenideDriver driver = new SelenideDriver(SelenideUtils.chromeConfig);
 
     @Test
     void shouldRegisterNewUser() {
         final String login = RandomDataUtils.randomEmail();
         final String password = RandomDataUtils.randomPassword();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateNewAccount()
                 .setUsername(login)
                 .setPassword(password)
@@ -31,14 +33,14 @@ public class RegisterWebTest {
     void shouldNotRegisterUserWithExistingUsername() {
         final String login = RandomDataUtils.randomEmail();
         final String password = RandomDataUtils.randomPassword();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateNewAccount()
                 .setUsername(login)
                 .setPassword(password)
                 .setPasswordSubmit(password)
                 .submitRegistration()
                 .singInAfterRegistration();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateNewAccount()
                 .setUsername(login)
                 .setPassword(password)
@@ -51,7 +53,7 @@ public class RegisterWebTest {
     void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
         final String login = RandomDataUtils.randomEmail();
         final String password = RandomDataUtils.randomPassword();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .clickCreateNewAccount()
                 .setUsername(login)
                 .setPassword(password)
@@ -64,7 +66,7 @@ public class RegisterWebTest {
     void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
         final String login = RandomDataUtils.randomEmail();
         final String password = RandomDataUtils.randomPassword();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(CFG.frontUrl(), LoginPage.class)
                 .loginWithBadCredentials(login, password)
                 .checkErrorAfterBadCredentials();
     }
