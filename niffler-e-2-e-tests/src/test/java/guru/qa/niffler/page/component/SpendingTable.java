@@ -3,6 +3,7 @@ package guru.qa.niffler.page.component;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.model.DataFilterValues;
+import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.EditSpendingPage;
 import guru.qa.niffler.page.MainPage;
 import io.qameta.allure.Step;
@@ -13,6 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static guru.qa.niffler.condition.SpendConditions.spends;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
@@ -87,5 +89,10 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
         return this;
     }
 
+    @Step("Проверяем, что в таблице с тратами корректные данныые")
+    public SpendingTable checkSpendings(SpendJson... spendings) {
+        tableRows.should(spends(spendings));
+        return this;
+    }
 
 }

@@ -1,13 +1,15 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Bubble;
 import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.model.Currency;
+import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Date;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
@@ -42,7 +45,13 @@ public class SpendingWebTest {
                 .setNewSpendingDescription(newDescription)
                 .save();
 
-        new MainPage().checkThatTableContainsSpending(newDescription);
+        new MainPage().getSpendingTable().checkSpendings(SpendJson.toTestSpendings(
+                "Обучение",
+                79990,
+                CurrencyValues.RUB,
+                "Обучение Niffler Next Generation",
+                new Date()
+        ));
     }
 
     @User
@@ -52,9 +61,15 @@ public class SpendingWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .addNewSpendingClick().addNewSpending("300", category,
-                        "add new spending", Currency.EUR)
+                        "add new spending", CurrencyValues.EUR)
                 .checkAlertMessage("New spending is successfully created")
-                .checkThatTableContainsSpending("add new spending");
+                .getSpendingTable().checkSpendings(SpendJson.toTestSpendings(
+                        category,
+                        300,
+                        CurrencyValues.EUR,
+                        "add new spending",
+                        new Date()
+                ));
     }
 
     @User(
@@ -69,9 +84,8 @@ public class SpendingWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getStatComponent()
-                .checkStatisticBubblesContains("Обучение 79990 ₽")
-                .checkStatisticImage(expected)
-                .checkBubbles(Color.yellow);
+                .checkBubbles(new Bubble(Color.yellow, "Обучение 79990 ₽"))
+                .checkStatisticImage(expected);
     }
 
     @User(
@@ -92,15 +106,14 @@ public class SpendingWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getStatComponent()
-                .checkStatisticBubblesContains("Обучение 79990 ₽", "Отдых 30000 ₽")
-                .checkBubbles(Color.yellow, Color.green);
+                .checkBubblesInAnyOrder(new Bubble(Color.green, "Отдых 30000 ₽"),
+                        new Bubble(Color.yellow, "Обучение 79990 ₽"));
 
         new MainPage().getSpendingTable()
                 .deleteSpending("Спа-отель")
                 .getStatComponent()
-                .checkStatisticBubblesContains("Обучение 79990 ₽")
-                .checkStatisticImage(expected)
-                .checkBubbles(Color.yellow);
+                .checkBubbles(new Bubble(Color.yellow, "Обучение 79990 ₽"))
+                .checkStatisticImage(expected);
     }
 
     @User(
@@ -121,9 +134,10 @@ public class SpendingWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getStatComponent()
-                .checkStatisticBubblesContains("Обучение 79990 ₽", "Отдых 30000 ₽")
-                .checkStatisticImage(expected)
-                .checkBubbles(Color.yellow, Color.green);
+                .checkBubbles(new Bubble(Color.yellow, "Обучение 79990 ₽"),
+                        new Bubble(Color.green, "Отдых 30000 ₽"))
+                .checkStatisticImage(expected);
+
     }
 
     @User(
@@ -144,10 +158,26 @@ public class SpendingWebTest {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .successLogin(user.username(), user.testData().password())
                 .getSpendingTable().editSpending("Спа-отель").setNewCategory("Массаж").save()
-                .getStatComponent()
-                .checkStatisticBubblesContains("Обучение 79990 ₽", "Массаж 30000 ₽")
-                .checkStatisticImage(expected)
-                .checkBubbles(Color.yellow, Color.green);
+                .getSpendingTable().checkSpendings(
+                        SpendJson.toTestSpendings(
+                                "Обучение",
+                                79990,
+                                CurrencyValues.RUB,
+                                "Обучение Advanced 2.0",
+                                new Date()
+                        ),
+                        SpendJson.toTestSpendings(
+                                "Массаж",
+                                30000,
+                                CurrencyValues.RUB,
+                                "Спа-отель",
+                                new Date()
+                        )
+                );
+        new MainPage().getStatComponent()
+                .checkBubbles(new Bubble(Color.yellow, "Обучение 79990 ₽"),
+                        new Bubble(Color.green, "Массаж 30000 ₽"))
+                .checkStatisticImage(expected);
     }
 
     @User(
@@ -172,9 +202,10 @@ public class SpendingWebTest {
                 .getHeader()
                 .toMainPage()
                 .getStatComponent()
-                .checkStatisticBubblesContains("Отдых 30000 ₽", "Archived 79990 ₽")
-                .checkStatisticImage(expected)
-                .checkBubbles(Color.yellow, Color.green);
+                .checkBubblesContains(
+                        new Bubble(Color.yellow, "Отдых 30000 ₽"),
+                        new Bubble(Color.yellow, "Archived 79990 ₽"))
+                .checkStatisticImage(expected);
     }
 }
 

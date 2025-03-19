@@ -46,4 +46,23 @@ public record SpendJson(
         );
     }
 
+    public static @Nonnull SpendJson toTestSpendings(String categoryName, double amount, CurrencyValues currency,
+                                                     String description, Date spendDate) {
+
+        return new SpendJson(
+                null,
+                spendDate,
+                new CategoryJson(
+                        null,
+                        categoryName,
+                        "test",
+                        false
+                ),
+                currency,
+                amount,
+                description,
+                "test"
+        );
+    }
+
 }

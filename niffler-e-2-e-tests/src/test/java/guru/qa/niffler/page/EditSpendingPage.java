@@ -2,7 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.model.Currency;
+import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.page.component.Header;
 import io.qameta.allure.Step;
 
@@ -48,7 +48,7 @@ public class EditSpendingPage extends BasePage<EditSpendingPage> {
 
     @Step("Устанавливаем валюту траты равным {currency}")
     @Nonnull
-    public EditSpendingPage setNewCurrency(Currency currency) {
+    public EditSpendingPage setNewCurrency(CurrencyValues currency) {
         currencyBtn.click();
         currencyList.find(text(currency.name())).click();
         return this;
@@ -65,12 +65,12 @@ public class EditSpendingPage extends BasePage<EditSpendingPage> {
     @Step("Добавляем трату с параметрами: сумма {amount}, категория {category}, описание {description}")
     @Nonnull
     public MainPage addNewSpending(String amount, String category, String description) {
-        return addNewSpending(amount, category, description, Currency.RUB);
+        return addNewSpending(amount, category, description, CurrencyValues.RUB);
     }
 
     @Step("Добавляем трату с параметрами: сумма {amount}, категория {category}, описание {description}, валюта {currency}")
     @Nonnull
-    public MainPage addNewSpending(String amount, String category, String description, Currency currency) {
+    public MainPage addNewSpending(String amount, String category, String description, CurrencyValues currency) {
         setNewAmount(amount);
         setNewCategory(category);
         setNewCurrency(currency);
