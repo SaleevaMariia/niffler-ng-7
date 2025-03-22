@@ -1,6 +1,6 @@
 package guru.qa.niffler.api;
 
-import guru.qa.niffler.model.AuthJson;
+import com.fasterxml.jackson.databind.JsonNode;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -9,7 +9,7 @@ public interface AuthApi {
     Call<Void> authorize(@Query("response_type") String responseType,
                          @Query("client_id") String clientId,
                          @Query("scope") String scope,
-                         @Query("redirect_uri") String redirectUri,
+                         @Query(value = "redirect_uri", encoded = true) String redirectUri,
                          @Query("code_challenge") String codeChallenge,
                          @Query("code_challenge_method") String codeChallengeMethod
     );
@@ -23,8 +23,8 @@ public interface AuthApi {
 
     @FormUrlEncoded
     @POST("oauth2/token")
-    Call<AuthJson> token(@Field("code") String code,
-                         @Field("redirect_uri") String redirectUri,
+    Call<JsonNode> token(@Field("code") String code,
+                         @Field(value = "redirect_uri", encoded = true) String redirectUri,
                          @Field("code_verifier") String codeVerifier,
                          @Field("grant_type") String grantType,
                          @Field("client_id") String clientId
