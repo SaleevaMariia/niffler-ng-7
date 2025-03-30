@@ -1,6 +1,6 @@
 package guru.qa.niffler.api;
 
-import guru.qa.niffler.model.UserDataJson;
+import guru.qa.niffler.model.rest.UserDataJson;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;

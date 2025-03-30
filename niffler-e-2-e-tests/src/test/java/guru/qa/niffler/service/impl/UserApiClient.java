@@ -6,7 +6,7 @@ import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.FriendState;
 import guru.qa.niffler.model.TestData;
-import guru.qa.niffler.model.UserDataJson;
+import guru.qa.niffler.model.rest.UserDataJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import io.qameta.allure.Step;

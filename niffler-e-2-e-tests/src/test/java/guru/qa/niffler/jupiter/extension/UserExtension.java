@@ -1,7 +1,7 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.model.UserDataJson;
+import guru.qa.niffler.model.rest.UserDataJson;
 import guru.qa.niffler.service.UsersClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;

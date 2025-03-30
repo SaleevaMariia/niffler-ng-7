@@ -1,6 +1,6 @@
 package guru.qa.niffler.data.entity.user;
 
-import guru.qa.niffler.model.UserDataJson;
+import guru.qa.niffler.model.rest.UserDataJson;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

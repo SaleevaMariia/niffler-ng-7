@@ -1,10 +1,12 @@
-package guru.qa.niffler.model;
+package guru.qa.niffler.model.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.data.entity.user.FriendshipStatus;
 import guru.qa.niffler.data.entity.user.UserDataEntity;
+import guru.qa.niffler.model.FriendState;
+import guru.qa.niffler.model.TestData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

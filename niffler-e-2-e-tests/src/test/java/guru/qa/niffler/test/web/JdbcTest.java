@@ -2,9 +2,9 @@ package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.jupiter.extension.UsersClientExtension;
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.SpendJson;
-import guru.qa.niffler.model.UserDataJson;
+import guru.qa.niffler.model.rest.CategoryJson;
+import guru.qa.niffler.model.rest.SpendJson;
+import guru.qa.niffler.model.rest.UserDataJson;
 import guru.qa.niffler.service.SpendClient;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.service.impl.SpendDbClient;

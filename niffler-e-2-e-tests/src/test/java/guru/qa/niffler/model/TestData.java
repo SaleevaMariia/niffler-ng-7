@@ -1,5 +1,9 @@
 package guru.qa.niffler.model;
 
+import guru.qa.niffler.model.rest.CategoryJson;
+import guru.qa.niffler.model.rest.SpendJson;
+import guru.qa.niffler.model.rest.UserDataJson;
+
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
