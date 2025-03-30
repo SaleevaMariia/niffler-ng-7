@@ -2,7 +2,6 @@ package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.api.core.RestClient;
-import guru.qa.niffler.data.entity.user.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
@@ -15,7 +14,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,11 +65,10 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
 
     @Step("Получаем траты используя REST API")
-    public @Nonnull List<SpendJson> getSpends(String username, @Nullable CurrencyValues currency,
-                                              @Nullable Date from, @Nullable Date to) {
+    public @Nonnull List<SpendJson> getSpends(String username) {
         final Response<List<SpendJson>> response;
         try {
-            response = spendApi.getSpends(username, currency, from, to).execute();
+            response = spendApi.getSpends(username).execute();
         } catch (IOException e) {
             throw new AssertionError(e);
         }

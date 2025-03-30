@@ -26,6 +26,10 @@ public interface SpendApi {
                                     @Query("to") Date to
     );
 
+    @GET("internal/spends/all")
+    Call<List<SpendJson>> getSpends(@Query("username") String user
+    );
+
     @DELETE("internal/spends/remove")
     Call<Void> deleteSpends(@Query("username") String user, @Query("ids") List<String> ids);
 

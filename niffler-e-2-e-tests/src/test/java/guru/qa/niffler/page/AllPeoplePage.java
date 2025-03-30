@@ -13,6 +13,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
 public class AllPeoplePage extends BasePage<AllPeoplePage> {
+    public static final String URL = CFG.frontUrl() + "people/all";
     private final ElementsCollection allPeople = $("tbody#all").$$("tr");
     private final SearchField searchField = new SearchField($("input[placeholder='Search'"));
 

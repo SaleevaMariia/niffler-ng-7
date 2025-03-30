@@ -10,6 +10,8 @@ import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.service.impl.AuthApiClient;
+import guru.qa.niffler.service.impl.SpendApiClient;
+import guru.qa.niffler.service.impl.UserApiClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.openqa.selenium.Cookie;
@@ -22,6 +24,8 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ApiLoginExtension.class);
     private static final Config CFG = Config.getInstance();
     private final AuthApiClient authApiClient = new AuthApiClient();
+    private final SpendApiClient spendApiClient = new SpendApiClient();
+    private final UserApiClient userApiClient = new UserApiClient();
     private final boolean setupBrowser;
 
     private ApiLoginExtension(boolean setupBrowser) {
@@ -75,7 +79,12 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
                         UserDataJson fakeUser = new UserDataJson(
                                 apiLogin.username(),
                                 new TestData(
-                                        apiLogin.password()
+                                        apiLogin.password(),
+                                        spendApiClient.getCategories(apiLogin.username(), true),
+                                        spendApiClient.getSpends(apiLogin.username()),
+                                        userApiClient.getAllFriends(apiLogin.username()),
+                                        userApiClient.getAllOutcomeInvitation(apiLogin.username()),
+                                        userApiClient.getAllIncomeInvitation(apiLogin.username())
                                 )
                         );
                         if (userFromUserExtension != null) {

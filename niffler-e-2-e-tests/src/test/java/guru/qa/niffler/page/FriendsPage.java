@@ -15,7 +15,7 @@ import static com.codeborne.selenide.Selenide.$$;
 
 @ParametersAreNonnullByDefault
 public class FriendsPage extends BasePage<FriendsPage> {
-
+    public static final String URL = CFG.frontUrl() + "people/friends";
     private final ElementsCollection friendRequests = $("tbody#requests").$$("tr");
     private final ElementsCollection friends = $("tbody#friends").$$("tr");
     private final SelenideElement friendsArea = $("#simple-tabpanel-friends");
