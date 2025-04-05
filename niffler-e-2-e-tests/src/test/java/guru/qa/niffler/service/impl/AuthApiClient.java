@@ -29,7 +29,9 @@ public class AuthApiClient extends RestClient {
         final String redirectUri = CFG.frontUrl() + "authorized";
         final String clientId = "client";
 
-        authApi.authorize(
+        final Response<Void> response;
+
+        response = authApi.authorize(
                 "code",
                 clientId,
                 "openid",
