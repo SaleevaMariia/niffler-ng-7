@@ -1,38 +1,33 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.UserDataJson;
-import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.Test;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
 
 @WebTest
-
 public class ProfileTest {
-    private static final Config CFG = Config.getInstance();
-
-
     @User(
             categories = @Category(
                     archived = true
             )
     )
+    @ApiLogin
     @Test
     void archivedCategoryShouldPresentInCategoriesListWhenShowArchivedOn(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), defaultPassword).getHeader().toProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .clickArchivedSwitcher()
                 .checkThatCategoryVisible(categoryName);
     }
@@ -42,35 +37,33 @@ public class ProfileTest {
                     archived = true
             )
     )
+    @ApiLogin
     @Test
     void archivedCategoryShouldNotPresentInCategoriesListWhenShowArchivedOff(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), defaultPassword).getHeader().toProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .checkThatCategoryIsNotVisible(categoryName);
     }
 
     @User(
             categories = @Category()
     )
+    @ApiLogin
     @Test
     void activeCategoryShouldPresentInCategoriesList(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), defaultPassword)
-                .getHeader().toProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .checkThatCategoryVisible(categoryName);
     }
 
     @User(
             categories = @Category()
     )
+    @ApiLogin
     @Test
     void activeCategoryCanBeArchivedInProfile(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), defaultPassword)
-                .getHeader().toProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .archiveCategoryByName(categoryName)
                 .clickArchivedSwitcher()
                 .checkAlertMessage("Category " + categoryName + " is archived")
@@ -82,12 +75,11 @@ public class ProfileTest {
                     archived = true
             )
     )
+    @ApiLogin
     @Test
     void archivedCategoryCanBeActivatedInProfile(UserDataJson user) {
         String categoryName = user.testData().categories().getFirst().name();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), defaultPassword)
-                .getHeader().toProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .clickArchivedSwitcher()
                 .unArchiveCategoryByName(categoryName)
                 .checkAlertMessage("Category " + categoryName + " is unarchived")
@@ -95,13 +87,12 @@ public class ProfileTest {
     }
 
     @User
+    @ApiLogin
     @Test
     void nameCanBeChangedInProfile(UserDataJson user) {
         String username = user.username();
         String newName = randomUserName();
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), defaultPassword)
-                .getHeader().toProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .checkUsername(username)
                 .checkName("")
                 .changeName(newName)
@@ -111,10 +102,9 @@ public class ProfileTest {
     }
 
     @ScreenShotTest(value = "img/avatar.png")
+    @ApiLogin(username = "maria", password = "123456")
     void checkAvatar(BufferedImage expected) throws IOException {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin("maria", "123456")
-                .getHeader().toProfilePage().checkThatPageLoaded()
+        Selenide.open(ProfilePage.URL, ProfilePage.class).checkThatPageLoaded()
                 .checkAvatarImage(expected);
     }
 }

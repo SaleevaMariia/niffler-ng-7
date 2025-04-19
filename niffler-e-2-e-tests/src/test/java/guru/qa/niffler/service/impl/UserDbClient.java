@@ -84,9 +84,9 @@ public class UserDbClient implements UsersClient {
                             authUserRepository.create(authuser);
                             UserDataEntity user = userdataRepository.create(userDataEntity(username));
                             userdataRepository.sendInvitation(user, targetEntity);
-                            targetUser.testData()
-                                    .incomeInvitations()
-                                    .add(UserDataJson.fromEntity(user, FriendshipStatus.PENDING));
+                    targetUser.testData()
+                            .incomeInvitations()
+                            .add(UserDataJson.fromFriendEntity(user, FriendshipStatus.PENDING));
                             return null;
                         }
                 );
@@ -109,10 +109,10 @@ public class UserDbClient implements UsersClient {
                             UserEntity authuser = userEntity(username, defaultPassword);
                             authUserRepository.create(authuser);
                             UserDataEntity user = userdataRepository.create(userDataEntity(username));
-                            userdataRepository.sendInvitation(targetEntity, user);
-                            targetUser.testData()
-                                    .outcomeInvitations()
-                                    .add(UserDataJson.fromEntity(user, FriendshipStatus.PENDING));
+                    userdataRepository.sendInvitation(targetEntity, user);
+                    targetUser.testData()
+                            .outcomeInvitations()
+                            .add(UserDataJson.fromUserEntity(user, FriendshipStatus.PENDING));
                             return null;
                         }
                 );
@@ -135,10 +135,10 @@ public class UserDbClient implements UsersClient {
                             UserEntity authuser = userEntity(username, defaultPassword);
                             authUserRepository.create(authuser);
                             UserDataEntity user = userdataRepository.create(userDataEntity(username));
-                            userdataRepository.addFriend(targetEntity, user);
-                            targetUser.testData()
-                                    .friends()
-                                    .add(UserDataJson.fromEntity(user, FriendshipStatus.ACCEPTED));
+                    userdataRepository.addFriend(targetEntity, user);
+                    targetUser.testData()
+                            .friends()
+                            .add(UserDataJson.fromFriendEntity(user, FriendshipStatus.ACCEPTED));
                             return null;
                         }
                 );

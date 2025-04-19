@@ -1,65 +1,57 @@
 package guru.qa.niffler.service.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import guru.qa.niffler.api.AuthApi;
-import guru.qa.niffler.api.ThreadSafeCookieStore;
+import guru.qa.niffler.api.core.CodeInterceptor;
+import guru.qa.niffler.api.core.RestClient;
+import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.AuthJson;
-import guru.qa.niffler.utils.OauthUtils;
+import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
+import guru.qa.niffler.utils.OAuthUtils;
+import lombok.SneakyThrows;
 import retrofit2.Response;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
-@ParametersAreNonnullByDefault
-public class AuthApiClient {
+public class AuthApiClient extends RestClient {
+
     private static final Config CFG = Config.getInstance();
-    private final AuthApi authApi = new RestClient
-            .EmtyRestClient(CFG.authUrl(), true)
-            .retrofit()
-            .create(AuthApi.class);
-    private String codeVerifier;
-    private String codeChallenge;
-    private String code;
+    private final AuthApi authApi;
 
-    public void preRequest() {
-        try {
-            codeVerifier = OauthUtils.generateCodeVerifier();
-            codeChallenge = OauthUtils.generateCodeChallenge(codeVerifier);
-            authApi.authorize("code", "client", "openid",
-                    "http://127.0.0.1:3000/authorized", codeChallenge, "S256"
-            ).execute();
-
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public AuthApiClient() {
+        super(CFG.authUrl(), true, new CodeInterceptor());
+        this.authApi = retrofit.create(AuthApi.class);
     }
 
-    public void login(String username, String password) {
-        try {
-            Response<Void> response = authApi.login(ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN"),
-                    username, password).execute();
-            code = response.raw().request().url().queryParameter("code");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    @SneakyThrows
+    public String login(String username, String password) {
+        final String codeVerifier = OAuthUtils.generateCodeVerifier();
+        final String codeChallenge = OAuthUtils.generateCodeChallenge(codeVerifier);
+        final String redirectUri = CFG.frontUrl() + "authorized";
+        final String clientId = "client";
 
-    public String token() {
-        try {
-            Response<AuthJson> response = authApi.token(code,
-                    "http://127.0.0.1:3000/authorized",
-                    codeVerifier,
-                    "authorization_code",
-                    "client").execute();
-            return response.body().idToken();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        authApi.authorize(
+                "code",
+                clientId,
+                "openid",
+                redirectUri,
+                codeChallenge,
+                "S256"
+        ).execute();
+
+        authApi.login(
+                username,
+                password,
+                ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
+        ).execute();
+
+        Response<JsonNode> tokenResponse = authApi.token(
+                ApiLoginExtension.getCode(),
+                redirectUri,
+                clientId,
+                codeVerifier,
+                "authorization_code"
+        ).execute();
+
+        return tokenResponse.body().get("id_token").asText();
     }
 }

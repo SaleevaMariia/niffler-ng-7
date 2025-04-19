@@ -24,6 +24,9 @@ public interface UserApi {
     @GET("/internal/users/all")
     Call<List<UserDataJson>> allUsers(@Query("username") String username, @Query("searchQuery") String searchQuery);
 
+    @GET("/internal/friends/all")
+    Call<List<UserDataJson>> friends(@Query("username") String username, @Query("searchQuery") String searchQuery);
+
 
     @POST("internal/invitations/send")
     Call<UserDataJson> sendInvitation(@Query("username") String username,

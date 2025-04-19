@@ -1,79 +1,67 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.UserDataJson;
-import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.AllPeoplePage;
+import guru.qa.niffler.page.FriendsPage;
 import org.junit.jupiter.api.Test;
 
 @WebTest
 public class FriendsWebTest {
-    private static final Config CFG = Config.getInstance();
 
     @User(friends = 1)
+    @ApiLogin
     @Test
     void friendShouldBePresentInFriendsTable(UserDataJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), user.testData().password())
-                .getHeader()
-                .toFriendsPage()
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .checkPersonInFriends(user.testData().friendsUsernames()[0]);
     }
 
     @User
+    @ApiLogin
     @Test
-    void friendsTableShouldBeEmptyForNewUser(UserDataJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), user.testData().password())
-                .getHeader()
-                .toFriendsPage()
+    void friendsTableShouldBeEmptyForNewUser() {
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .checkFriendsTableIsEmpty();
     }
 
     @User(incomeInvitations = 1)
+    @ApiLogin
     @Test
     void incomeInvitationBePresentInFriendsTable(UserDataJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), user.testData().password())
-                .getHeader()
-                .toFriendsPage()
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .checkPersonInFriendsRequests(user.testData().incomeInvitationsUsernames()[0]);
     }
 
     @User(outcomeInvitations = 1)
+    @ApiLogin
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(UserDataJson user) {
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), user.testData().password())
-                .getHeader()
-                .toAllPeoplePage()
+        Selenide.open(AllPeoplePage.URL, AllPeoplePage.class)
                 .checkPersonWasSentOutcomeRequest(user.testData().outcomeInvitationsUsernames()[0]);
     }
 
 
     @User(incomeInvitations = 1)
+    @ApiLogin
     @Test
     void userCanAcceptFriendInvitation(UserDataJson user) {
         String userWithInvitationsName = user.testData().incomeInvitationsUsernames()[0];
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), user.testData().password())
-                .getHeader()
-                .toFriendsPage()
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .acceptFriendsRequest(userWithInvitationsName)
                 .checkAlertMessage("Invitation of " + userWithInvitationsName + " accepted")
                 .checkPersonInFriends(userWithInvitationsName);
     }
 
     @User(incomeInvitations = 1)
+    @ApiLogin
     @Test
     void userCanDeclineFriendInvitation(UserDataJson user) {
         String userWithInvitationsName = user.testData().incomeInvitationsUsernames()[0];
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin(user.username(), user.testData().password())
-                .getHeader()
-                .toFriendsPage()
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .declineFriendsRequest(userWithInvitationsName)
                 .checkAlertMessage("Invitation of " + userWithInvitationsName + " is declined")
                 .checkPersonNotInFriends(userWithInvitationsName);

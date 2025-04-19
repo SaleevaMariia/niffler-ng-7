@@ -1,6 +1,5 @@
-package guru.qa.niffler.service.impl;
+package guru.qa.niffler.api.core;
 
-import guru.qa.niffler.api.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
 import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.Interceptor;
@@ -11,10 +10,12 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
+import static okhttp3.logging.HttpLoggingInterceptor.Level.HEADERS;
 import static org.apache.commons.lang.ArrayUtils.isNotEmpty;
 
 @ParametersAreNonnullByDefault
@@ -33,6 +34,10 @@ public abstract class RestClient {
 
     public RestClient(String baseUrl, Converter.Factory factory) {
         this(baseUrl, false, factory, HttpLoggingInterceptor.Level.BODY);
+    }
+
+    public RestClient(String baseUrl, boolean followRedirect, @Nullable Interceptor... interceptors) {
+        this(baseUrl, followRedirect, JacksonConverterFactory.create(), HEADERS, interceptors);
     }
 
     public RestClient(String baseUrl, boolean followRedirect, Converter.Factory factory,

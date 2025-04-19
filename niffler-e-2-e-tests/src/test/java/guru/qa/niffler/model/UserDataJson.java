@@ -30,11 +30,11 @@ public record UserDataJson(
         @JsonProperty("photoSmall")
         String photoSmall,
         @JsonProperty("friendState")
-        FriendshipStatus friendState,
+        FriendState friendState,
         @JsonIgnore
         TestData testData) {
 
-    public static @Nonnull UserDataJson fromEntity(UserDataEntity entity, FriendshipStatus friendshipStatus) {
+    public static @Nonnull UserDataJson fromEntity(UserDataEntity entity, FriendState friendshipStatus) {
         return new UserDataJson(
                 entity.getId(),
                 entity.getUsername(),
@@ -48,6 +48,45 @@ public record UserDataJson(
                 null
 
         );
+    }
+
+    public static @Nonnull UserDataJson fromFriendEntity(UserDataEntity entity, FriendshipStatus friendshipStatus) {
+        return new UserDataJson(
+                entity.getId(),
+                entity.getUsername(),
+                entity.getFirstname(),
+                entity.getSurname(),
+                entity.getFullname(),
+                entity.getCurrency(),
+                entity.getPhoto() != null && entity.getPhoto().length > 0 ? new String(entity.getPhoto(), StandardCharsets.UTF_8) : null,
+                entity.getPhotoSmall() != null && entity.getPhotoSmall().length > 0 ? new String(entity.getPhotoSmall(), StandardCharsets.UTF_8) : null,
+                friendshipStatus == FriendshipStatus.PENDING ? FriendState.INVITE_RECEIVED : FriendState.FRIEND,
+                null
+        );
+    }
+
+    public static @Nonnull UserDataJson fromUserEntity(UserDataEntity entity, FriendshipStatus friendshipStatus) {
+        return new UserDataJson(
+                entity.getId(),
+                entity.getUsername(),
+                entity.getFirstname(),
+                entity.getSurname(),
+                entity.getFullname(),
+                entity.getCurrency(),
+                entity.getPhoto() != null && entity.getPhoto().length > 0 ? new String(entity.getPhoto(), StandardCharsets.UTF_8) : null,
+                entity.getPhotoSmall() != null && entity.getPhotoSmall().length > 0 ? new String(entity.getPhotoSmall(), StandardCharsets.UTF_8) : null,
+                friendshipStatus == FriendshipStatus.PENDING ? FriendState.INVITE_SENT : null,
+                null
+        );
+    }
+
+
+    public UserDataJson(@Nonnull String username) {
+        this(username, null);
+    }
+
+    public UserDataJson(@Nonnull String username, @Nullable TestData testData) {
+        this(null, username, null, null, null, null, null, null, null, testData);
     }
 
     public UserDataJson addTestData(TestData testData) {

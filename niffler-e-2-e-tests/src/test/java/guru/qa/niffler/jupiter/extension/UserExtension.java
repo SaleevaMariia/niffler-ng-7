@@ -6,6 +6,8 @@ import guru.qa.niffler.service.UsersClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import javax.annotation.Nullable;
+
 import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUserName;
 
@@ -41,6 +43,23 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
         return extensionContext.getStore(NAMESPACE).get(
                 extensionContext.getUniqueId(),
                 UserDataJson.class
+        );
+    }
+
+    @Nullable
+    public static UserDataJson createdUser() {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        return context.getStore(NAMESPACE).get(
+                context.getUniqueId(),
+                UserDataJson.class
+        );
+    }
+
+    public static void setUser(UserDataJson testUser) {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        context.getStore(NAMESPACE).put(
+                context.getUniqueId(),
+                testUser
         );
     }
 }

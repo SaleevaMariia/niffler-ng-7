@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
 public class ProfilePage extends BasePage<ProfilePage> {
+    public static final String URL = CFG.frontUrl() + "profile";
     private final SelenideElement showArchived = $("span.MuiSwitch-switchBase");
     private final ElementsCollection tableRows = $("div.MuiGrid-container", 1)
             .findAll("div.MuiGrid-item")
