@@ -1,8 +1,10 @@
 package guru.qa.niffler.service.impl;
 
-import guru.qa.niffler.api.ThreadSafeCookieStore;
 import guru.qa.niffler.api.UserApi;
+import guru.qa.niffler.api.core.RestClient;
+import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.model.FriendState;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserDataJson;
 import guru.qa.niffler.service.UsersClient;
@@ -17,6 +19,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static guru.qa.niffler.utils.RandomDataUtils.defaultPassword;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -129,6 +132,63 @@ public class UserApiClient implements UsersClient {
         }
     }
 
+    @Step("Возвращаем список всех входящих приглашений в друзья используя REST API")
+    public List<UserDataJson> getAllIncomeInvitation(String username) {
+        return getAllIncomeInvitation(username, "");
+    }
+
+    @Step("Возвращаем список всех входящих приглашений в друзья используя REST API")
+    public List<UserDataJson> getAllIncomeInvitation(String username, String searchQuery) {
+        Response<List<UserDataJson>> response;
+        try {
+            response = userApiUserData.friends(username, searchQuery).execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null ?
+                response.body().stream().filter(f -> f.friendState() == FriendState.INVITE_RECEIVED).collect(Collectors.toList())
+                : Collections.emptyList();
+    }
+
+    @Step("Возвращаем список всех исходящих приглашений в друзья используя REST API")
+    public List<UserDataJson> getAllOutcomeInvitation(String username) {
+        return getAllOutcomeInvitation(username, "");
+    }
+
+    @Step("Возвращаем список всех исходящих приглашений в друзья используя REST API")
+    public List<UserDataJson> getAllOutcomeInvitation(String username, String searchQuery) {
+        Response<List<UserDataJson>> response;
+        try {
+            response = userApiUserData.allUsers(username, searchQuery).execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null ?
+                response.body().stream().filter(f -> f.friendState() == FriendState.INVITE_SENT).collect(Collectors.toList())
+                : Collections.emptyList();
+    }
+
+    @Step("Возвращаем список всех друзей пользователя используя REST API")
+    public List<UserDataJson> getAllFriends(String username) {
+        return getAllFriends(username, "");
+    }
+
+    @Step("Возвращаем список всех друзей пользователя используя REST API")
+    public List<UserDataJson> getAllFriends(String username, String searchQuery) {
+        Response<List<UserDataJson>> response;
+        try {
+            response = userApiUserData.friends(username, searchQuery).execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null ?
+                response.body().stream().filter(f -> f.friendState() == FriendState.FRIEND).collect(Collectors.toList())
+                : Collections.emptyList();
+    }
+
     @Step("Возвращаем список всех пользователей используя REST API")
     public List<UserDataJson> getAllUsers(String username, String searchQuery) {
         Response<List<UserDataJson>> response;
@@ -138,6 +198,7 @@ public class UserApiClient implements UsersClient {
             throw new AssertionError(e);
         }
         assertEquals(200, response.code());
-        return response.body() != null ? response.body() : Collections.emptyList();
+        return response.body() != null ?
+                response.body() : Collections.emptyList();
     }
 }
