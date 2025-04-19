@@ -44,4 +44,26 @@ public class GatewayV2ApiClient extends RestClient {
         assertEquals(200, response.code());
         return requireNonNull(response.body());
     }
+
+    @Step("Send GET request /api/v2/users/all to niffler-gateway")
+    @Nonnull
+    public RestResponsePage<UserDataJson> allUsers(String bearerToken,
+                                                   int page,
+                                                   int size,
+                                                   @Nullable String sort,
+                                                   @Nullable String searchQuery) {
+        final Response<RestResponsePage<UserDataJson>> response;
+        try {
+            response = gatewayApi.allUsers(bearerToken,
+                            page,
+                            size,
+                            sort,
+                            searchQuery)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return requireNonNull(response.body());
+    }
 }

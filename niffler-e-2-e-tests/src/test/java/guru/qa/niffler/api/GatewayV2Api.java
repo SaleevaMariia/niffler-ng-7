@@ -19,4 +19,11 @@ public interface GatewayV2Api {
                                                     @Query("sort") @Nullable String sort,
                                                     @Query("searchQuery") @Nullable String searchQuery);
 
+    @GET("api/v2/users/all")
+    Call<RestResponsePage<UserDataJson>> allUsers(@Header("Authorization") String bearerToken,
+                                                  @Query("page") int page,
+                                                  @Query("size") int size,
+                                                  @Query("sort") @Nullable String sort,
+                                                  @Query("searchQuery") @Nullable String searchQuery);
+
 }
